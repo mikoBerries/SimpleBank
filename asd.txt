@@ -1,0 +1,25 @@
+postgres:
+	docker run --name post -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=mysecretpassword -d postgres
+createdb:
+	docker exec -it post createdb --username=root --owner=root simple_bank
+dropdb:
+	docker exec -it post dropdb simple_bank
+migrateup:
+	migrate --path db/migrations -database "postgresql://root:mysecretpassword@localhost:5432/simple_bank?sslmode=disable" -verbose up
+migratedown:
+	migrate --path db/migrations -database "postgresql://root:mysecretpassword@localhost:5432/simple_bank?sslmode=disable" -verbose down
+bash:
+	docker exec -it post bash
+access:
+	docker exec -it post psql simple_bank
+# sqlcdocker:
+# 	docker run --rm -v "C:\Users\Gio\Documents\goworkspace\src\github.com\MikoBerries\SimpleBank":/src -w /src kjconroy/sqlc generate
+sqlcdockerver:
+	docker run -d --name devtest -v awsome:/foo -w /foo kjconroy/sqlc version
+	docker inspect devtest
+sqlcdockerinit:
+	docker run --rm -v awsome:/foo -w /foo kjconroy/sqlc init
+	docker run --rm -v awsome:/foo -w /src kjconroy/sqlc generate
+sqlcdockergen:
+	docker run --rm -v $(PWD):/src -w /src kjconroy/sqlc:1.18.0 generate
+.PHONY: postgres createdb dropdb access migrateup migratedown sqlcdockerinit sqlcdockergen sqlcdockerver 
