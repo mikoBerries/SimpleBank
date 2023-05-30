@@ -28,3 +28,10 @@ https://gorm.io/docs/query.html
 
 sqlc.yaml config
 https://docs.sqlc.dev/en/latest/reference/config.html#gen
+
+Transaction 
+
+A transaction is a single logical unit of work that accesses and possibly modifies the contents of a database. Transactions access data using read and write operations. 
+In order to maintain consistency in a database, before and after the transaction, certain properties are followed. These are called ACID properties.
+
+https://www.geeksforgeeks.org/acid-properties-in-dbms/

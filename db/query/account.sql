@@ -11,14 +11,18 @@ INSERT INTO accounts (
 SELECT * FROM accounts
 WHERE id = $1;
 
--- name: ListAccount :many
+-- name: ListAccounts :many
 SELECT * FROM accounts
-ORDER BY id;
+WHERE owner = $1
+ORDER BY id
+LIMIT $2
+OFFSET $3;
 
--- name: UpdateAccounts :exec
+-- name: UpdateAccount :one
 UPDATE accounts 
-SET owner = $2, balance = $3,currency = $4
-WHERE id = $1;
+SET owner = $2, balance = $3
+WHERE id = $1
+RETURNING *;
 
 -- name: DeleteAccount :exec
 DELETE FROM accounts WHERE id = $1;

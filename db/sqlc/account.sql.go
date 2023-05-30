@@ -65,13 +65,22 @@ func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
 	return i, err
 }
 
-const listAccount = `-- name: ListAccount :many
+const listAccounts = `-- name: ListAccounts :many
 SELECT id, owner, balance, currency, created_at FROM accounts
+WHERE owner = $1
 ORDER BY id
+LIMIT $2
+OFFSET $3
 `
 
-func (q *Queries) ListAccount(ctx context.Context) ([]Account, error) {
-	rows, err := q.db.QueryContext(ctx, listAccount)
+type ListAccountsParams struct {
+	Owner  string `json:"owner"`
+	Limit  int32  `json:"limit"`
+	Offset int32  `json:"offset"`
+}
+
+func (q *Queries) ListAccounts(ctx context.Context, arg ListAccountsParams) ([]Account, error) {
+	rows, err := q.db.QueryContext(ctx, listAccounts, arg.Owner, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -99,25 +108,28 @@ func (q *Queries) ListAccount(ctx context.Context) ([]Account, error) {
 	return items, nil
 }
 
-const updateAccounts = `-- name: UpdateAccounts :exec
+const updateAccount = `-- name: UpdateAccount :one
 UPDATE accounts 
-SET owner = $2, balance = $3,currency = $4
+SET owner = $2, balance = $3
 WHERE id = $1
+RETURNING id, owner, balance, currency, created_at
 `
 
-type UpdateAccountsParams struct {
-	ID       int64  `json:"id"`
-	Owner    string `json:"owner"`
-	Balance  int64  `json:"balance"`
-	Currency string `json:"currency"`
+type UpdateAccountParams struct {
+	ID      int64  `json:"id"`
+	Owner   string `json:"owner"`
+	Balance int64  `json:"balance"`
 }
 
-func (q *Queries) UpdateAccounts(ctx context.Context, arg UpdateAccountsParams) error {
-	_, err := q.db.ExecContext(ctx, updateAccounts,
-		arg.ID,
-		arg.Owner,
-		arg.Balance,
-		arg.Currency,
+func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParams) (Account, error) {
+	row := q.db.QueryRowContext(ctx, updateAccount, arg.ID, arg.Owner, arg.Balance)
+	var i Account
+	err := row.Scan(
+		&i.ID,
+		&i.Owner,
+		&i.Balance,
+		&i.Currency,
+		&i.CreatedAt,
 	)
-	return err
+	return i, err
 }

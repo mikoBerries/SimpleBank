@@ -12,6 +12,10 @@ bash:
 	docker exec -it post bash
 access:
 	docker exec -it post psql simple_bank
+test:
+	go test -v -cover ./...
+cleantest:
+	go clean -testcache
 # sqlcdocker:
 # 	docker run --rm -v "C:\Users\Gio\Documents\goworkspace\src\github.com\MikoBerries\SimpleBank":/src -w /src kjconroy/sqlc generate
 # sqlcdockerver:
@@ -20,5 +24,5 @@ access:
 # 	docker run --rm --volumes-from myapps -v $(PWD):/src -w /src kjconroy/sqlc init
 # sqlcdockergen:
 # 	docker run --rm -v $(PWD):/src -w /src kjconroy/sqlc generate
-ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-PHONY: postgres createdb dropdb access migrateup migratedown sqlc
+
+PHONY: postgres createdb dropdb access migrateup migratedown sqlc test cleantest
