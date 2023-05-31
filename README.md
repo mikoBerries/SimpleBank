@@ -35,3 +35,15 @@ A transaction is a single logical unit of work that accesses and possibly modifi
 In order to maintain consistency in a database, before and after the transaction, certain properties are followed. These are called ACID properties.
 
 https://www.geeksforgeeks.org/acid-properties-in-dbms/
+
+Dirty Read in database 
+
+The simplest explanation of the dirty read is the state of reading uncommitted data. In this circumstance, we are not sure about the consistency of the data that is read because we don’t know the result of the open transaction(s). After reading the uncommitted data, the open transaction can be completed with rollback. On the other hand, the open transaction can complete its actions successfully. The data that is read in this ambiguous way is defined as dirty data.
+
+To Prevent Dirty Read : Lock-Based Protocols - To attain consistency, isolation between the transactions is the most important tool. 
+
+https://www.postgresql.org/docs/current/explicit-locking.html
+
+Deadlock in database
+
+In a database, a deadlock is a situation in which two or more transactions are waiting for one another to give up locks. For example, Transaction A might hold a lock on some rows in the Accounts table and needs to update some rows in the Orders table to finish.
