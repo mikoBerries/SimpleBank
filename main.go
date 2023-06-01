@@ -6,13 +6,19 @@ import (
 
 	"github.com/MikoBerries/SimpleBank/api"
 	db "github.com/MikoBerries/SimpleBank/db/sqlc"
+	"github.com/MikoBerries/SimpleBank/util"
 
 	_ "github.com/lib/pq"
 )
 
 func main() {
+	//load config file using viper
+	cf, err := util.LoadConfig(".")
+	if err != nil {
+		log.Panic(err)
+	}
 	//db connection
-	coon, err := sql.Open("postgres", "postgresql://root:mysecretpassword@localhost:5432/simple_bank?sslmode=disable")
+	coon, err := sql.Open(cf.DBDriver, cf.DBSource)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -21,7 +27,7 @@ func main() {
 	//server config
 	srv := api.NewServer(store)
 	// servErr := make(chan os.Signal)
-	err = srv.StartServerAddress(":8080")
+	err = srv.StartServerAddress(cf.ServerAddress)
 
 	// <-
 	//FOR Grace SHUTDOWN

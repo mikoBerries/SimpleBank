@@ -64,3 +64,6 @@ validator used in gin
 https://pkg.go.dev/github.com/go-playground/validator#hdr-Baked_In_Validators_and_Tags
 Gin ready template project
 https://github.com/gin-gonic/examples
+
+Viper lib For Easy configuration File management tools
+https://github.com/spf13/viper
