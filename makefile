@@ -12,6 +12,8 @@ test:
 	go test -v -cover ./...
 cleantest:
 	go clean -testcache
+server:
+	go run main.go
 # sqlcdocker:
 # 	docker run --rm -v "C:\Users\Gio\Documents\goworkspace\src\github.com\MikoBerries\SimpleBank":/src -w /src kjconroy/sqlc generate
 # sqlcdockerver:
@@ -21,4 +23,4 @@ cleantest:
 # sqlcdockergen:
 # 	docker run --rm -v $(PWD):/src -w /src kjconroy/sqlc generate
 
-PHONY: postgres createdb dropdb migrateup migratedown test cleantest
+PHONY: postgres createdb dropdb migrateup migratedown test cleantest server

@@ -55,7 +55,7 @@ func TestTransferTx(t *testing.T) {
 
 		//check actual transfer data from DB
 		//if Transfer record are found will be return a transfer struct and a nil error
-		_, err := store.queires.GetTransfer(context.Background(), tf.Transfer.ID)
+		_, err := store.Queries.GetTransfer(context.Background(), tf.Transfer.ID)
 		require.NoError(t, err)
 
 		//check FromEntry
@@ -67,7 +67,7 @@ func TestTransferTx(t *testing.T) {
 		require.Equal(t, account1.ID, fromEntry.AccountID) //account id eq check
 
 		//check actual entry data from DB
-		_, err = store.queires.GetEntry(context.Background(), fromEntry.ID)
+		_, err = store.Queries.GetEntry(context.Background(), fromEntry.ID)
 		require.NoError(t, err)
 
 		//check toEntry
@@ -79,7 +79,7 @@ func TestTransferTx(t *testing.T) {
 		require.Equal(t, account2.ID, toEntry.AccountID) //account id eq check
 
 		//check actual entry data from DB
-		_, err = store.queires.GetEntry(context.Background(), toEntry.ID)
+		_, err = store.Queries.GetEntry(context.Background(), toEntry.ID)
 		require.NoError(t, err)
 
 		//check balance in every account
@@ -107,10 +107,10 @@ func TestTransferTx(t *testing.T) {
 	}
 
 	// check the final updated balance
-	updatedAccount1, err := store.queires.GetAccount(context.Background(), account1.ID)
+	updatedAccount1, err := store.Queries.GetAccount(context.Background(), account1.ID)
 	require.NoError(t, err)
 
-	updatedAccount2, err := store.queires.GetAccount(context.Background(), account2.ID)
+	updatedAccount2, err := store.Queries.GetAccount(context.Background(), account2.ID)
 	require.NoError(t, err)
 
 	fmt.Println(">> after:", updatedAccount1.Balance, updatedAccount2.Balance)
@@ -158,10 +158,10 @@ func TestTransferTxDeadlock(t *testing.T) {
 	}
 
 	// check the final updated balance
-	updatedAccount1, err := store.queires.GetAccount(context.Background(), account1.ID)
+	updatedAccount1, err := store.Queries.GetAccount(context.Background(), account1.ID)
 	require.NoError(t, err)
 
-	updatedAccount2, err := store.queires.GetAccount(context.Background(), account2.ID)
+	updatedAccount2, err := store.Queries.GetAccount(context.Background(), account2.ID)
 	require.NoError(t, err)
 
 	fmt.Println(">> after:", updatedAccount1.Balance, updatedAccount2.Balance)

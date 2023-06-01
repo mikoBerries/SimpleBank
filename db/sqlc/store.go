@@ -9,15 +9,15 @@ import (
 //Store Embedding Queries and sq.DB
 //to make a struct that can call queries and db to do transaction
 type Store struct {
-	queires *Queries
-	db      *sql.DB
+	db *sql.DB
+	*Queries
 }
 
 //NewStore make and return new  Store struct
 func NewStore(db *sql.DB) *Store {
 	return &Store{
 		db:      db,
-		queires: New(db),
+		Queries: New(db),
 	}
 }
 

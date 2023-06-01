@@ -1,31 +1,55 @@
 package main
 
 import (
-	"context"
 	"database/sql"
-	"fmt"
 	"log"
 
-	sqlc "github.com/MikoBerries/SimpleBank/db/sqlc"
+	"github.com/MikoBerries/SimpleBank/api"
+	db "github.com/MikoBerries/SimpleBank/db/sqlc"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
-	ctx := context.Background()
+	//db connection
+	coon, err := sql.Open("postgres", "postgresql://root:mysecretpassword@localhost:5432/simple_bank?sslmode=disable")
+	if err != nil {
+		log.Panic(err)
+	}
+	//NewStore new struct of db conn and embbed querries
+	store := db.NewStore(coon)
+	//server config
+	srv := api.NewServer(store)
+	// servErr := make(chan os.Signal)
+	err = srv.StartServerAddress(":8080")
 
-	db, err := sql.Open("postgres", "user=pqgotest dbname=pqgotest sslmode=verify-full")
-	if err != nil {
-		log.Panic(err)
-	}
-	// defer db.Close()
-	sqlcdb := sqlc.New(db)
-	param := sqlc.CreateAccountParams{
-		Owner:    "somebody",
-		Balance:  10000000000000,
-		Currency: "$",
-	}
-	result, err := sqlcdb.CreateAccount(ctx, param)
-	if err != nil {
-		log.Panic(err)
-	}
-	fmt.Println(result)
+	// <-
+	//FOR Grace SHUTDOWN
+
+	// go func() {
+	// 	if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+	// 		log.Printf("listen: %s\n", err)
+	// 	}
+	// }()
+
+	// // Wait for interrupt signal to gracefully shutdown the server with
+	// // a timeout of 5 seconds.
+	// quit := make(chan os.Signal)
+	// // kill (no param) default send syscall.SIGTERM
+	// // kill -2 is syscall.SIGINT
+	// // kill -9 is syscall.SIGKILL but can't be caught, so don't need to add it
+	// signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	// <-quit
+	// log.Println("Shutting down server...")
+
+	// // The context is used to inform the server it has 5 seconds to finish
+	// // the request it is currently handling
+	// ctx, cancel := context.WithTimeout(context.Background(), 5*coon.Stats().MaxIdleTimeClosed.Second)
+	// defer cancel()
+
+	// if err := srv.Shutdown(ctx); err != nil {
+	// }
+
+	log.Fatal("Server forced to shutdown:", err)
+	log.Println("Server exiting")
 }

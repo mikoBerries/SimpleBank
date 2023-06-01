@@ -56,3 +56,11 @@ Github CI
 
 Postgres service:
 https://docs.github.com/en/actions/using-containerized-services/creating-postgresql-service-containers
+
+
+Gin
+framework for golang 
+validator used in gin
+https://pkg.go.dev/github.com/go-playground/validator#hdr-Baked_In_Validators_and_Tags
+Gin ready template project
+https://github.com/gin-gonic/examples
