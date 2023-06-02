@@ -23,9 +23,12 @@ func NewServer(store db.Store) *server {
 
 	// Default router With the Logger and Recovery middleware already attached
 	router := gin.Default()
-	gin.SetMode(gin.DebugMode)
+
+	//set logger mode
+	// gin.SetMode(gin.TestMode)
 	// gin.SetMode(gin.ReleaseMode)
-	//Debuger
+
+	//Costume Debuger
 	// gin.DebugPrintRouteFunc = func(httpMethod, absolutePath, handlerName string, nuHandlers int) {
 	// 	log.Printf("endpoint %v %v %v %v\n", httpMethod, absolutePath, handlerName, nuHandlers)
 	//   }
@@ -36,9 +39,13 @@ func NewServer(store db.Store) *server {
 	router.GET("/account/:id", s.getAccountByID)
 	router.GET("/account", s.getListAccount)
 
+	router.POST("/transfer", s.createTransfer)
+
+	//register our costum validator to default gin (validator/v10)
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-		//register own costum validator ("tag-name", func(validator.FieldLevel)bool )
+		//adding own costum validator ("tag-name", func(validator.FieldLevel)bool )
 		v.RegisterValidation("bookabledate", cv.BookableDate)
+		v.RegisterValidation("IsCurrency", cv.IsCurrency)
 	}
 
 	s.router = router
