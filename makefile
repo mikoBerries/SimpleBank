@@ -8,6 +8,10 @@ migrateup:
 	migrate --path db/migrations -database "postgresql://root:mysecretpassword@localhost:5432/simple_bank?sslmode=disable" -verbose up
 migratedown:
 	migrate --path db/migrations -database "postgresql://root:mysecretpassword@localhost:5432/simple_bank?sslmode=disable" -verbose down
+migrateup1:
+	migrate --path db/migrations -database "postgresql://root:mysecretpassword@localhost:5432/simple_bank?sslmode=disable" -verbose up 1
+migratedown1:
+	migrate --path db/migrations -database "postgresql://root:mysecretpassword@localhost:5432/simple_bank?sslmode=disable" -verbose down 1
 test:
 	go test -v -cover ./...
 cleantest:
@@ -26,4 +30,4 @@ mock:
 # sqlcdockergen:
 # 	docker run --rm -v $(PWD):/src -w /src kjconroy/sqlc generate
 
-PHONY: postgres createdb dropdb migrateup migratedown test cleantest server mock
+PHONY: postgres createdb dropdb migrateup migratedown test cleantest server mock migrateup1 migratedown1
