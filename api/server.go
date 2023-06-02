@@ -12,18 +12,19 @@ import (
 )
 
 type server struct {
-	store  *db.Store
+	store  db.Store
 	router *gin.Engine
 }
 
 //NewServer Create new Server with gin router
-func NewServer(store *db.Store) *server {
+func NewServer(store db.Store) *server {
 	s := &server{}
 	s.store = store
 
 	// Default router With the Logger and Recovery middleware already attached
 	router := gin.Default()
-
+	gin.SetMode(gin.DebugMode)
+	// gin.SetMode(gin.ReleaseMode)
 	//Debuger
 	// gin.DebugPrintRouteFunc = func(httpMethod, absolutePath, handlerName string, nuHandlers int) {
 	// 	log.Printf("endpoint %v %v %v %v\n", httpMethod, absolutePath, handlerName, nuHandlers)
@@ -32,7 +33,7 @@ func NewServer(store *db.Store) *server {
 
 	//similar with handle func
 	router.POST("/createAccount", s.createAccount)
-	router.POST("/account/:id", s.getAccountByID)
+	router.GET("/account/:id", s.getAccountByID)
 	router.GET("/account", s.getListAccount)
 
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {

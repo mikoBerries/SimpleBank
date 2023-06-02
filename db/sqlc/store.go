@@ -6,25 +6,31 @@ import (
 	"fmt"
 )
 
+//Store interface for mock testing need
+type Store interface {
+	TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error)
+	Querier
+}
+
 //Store Embedding Queries and sq.DB
 //to make a struct that can call queries and db to do transaction
-type Store struct {
+type SqlStore struct {
 	db *sql.DB
 	*Queries
 }
 
 //NewStore make and return new  Store struct
-func NewStore(db *sql.DB) *Store {
-	return &Store{
+func NewStore(db *sql.DB) *SqlStore {
+	return &SqlStore{
 		db:      db,
 		Queries: New(db),
 	}
 }
 
 //execTx execute transaction
-func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
+func (sqlStore *SqlStore) execTx(ctx context.Context, fn func(*Queries) error) error {
 	//Begin Transaction using context and isolation rule
-	tx, err := store.db.BeginTx(ctx, nil)
+	tx, err := sqlStore.db.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("error when begin transcation %w", err)
 	}
@@ -59,9 +65,9 @@ type TransferTxResult struct {
 }
 
 //TransferTx performs transfer moeny from one account to other account
-func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
+func (sqlStore *SqlStore) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
 	var result TransferTxResult
-	err := store.execTx(ctx, func(q *Queries) error {
+	err := sqlStore.execTx(ctx, func(q *Queries) error {
 		var err error
 		//create transfer record
 		result.Transfer, err = q.CreateTransfer(ctx, CreateTransferParams{

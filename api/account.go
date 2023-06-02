@@ -30,7 +30,7 @@ func (server *server) createAccount(ctx *gin.Context) {
 		Currency: req.Currency,
 	}
 
-	acc, err := server.store.Queries.CreateAccount(ctx, arg)
+	acc, err := server.store.CreateAccount(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"err": err.Error()})
 		return
@@ -39,7 +39,7 @@ func (server *server) createAccount(ctx *gin.Context) {
 }
 
 type AccountByIDRequest struct {
-	ID int64 `uri:"id" binding:"required,numeric"`
+	ID int64 `uri:"id" binding:"required,numeric,min=1" `
 }
 
 // getAccountByID getting 1 account data by ID
