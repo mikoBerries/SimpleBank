@@ -9,9 +9,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	mockdb "github.com/MikoBerries/SimpleBank/db/mock"
 	db "github.com/MikoBerries/SimpleBank/db/sqlc"
+	"github.com/MikoBerries/SimpleBank/token"
 	"github.com/MikoBerries/SimpleBank/util"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
@@ -19,7 +21,9 @@ import (
 
 func TestGetAccountByID(t *testing.T) {
 	//Expected Test account
-	expectAccount := createRandomAccount()
+
+	user, _ := randomUser(t)
+	expectAccount := createRandomAccount(user.Username)
 
 	ctrl := gomock.NewController(t)
 	//a mockgen version of 1.5.0+, and are passing a *testing.T into gomock.NewController(t)
@@ -30,12 +34,16 @@ func TestGetAccountByID(t *testing.T) {
 	testCase := []struct {
 		name          string
 		accountId     int64
+		setupAuth     func(t *testing.T, request *http.Request, tokenMaker token.Maker)
 		buildStubs    func(store *mockdb.MockStore)
 		checkResponse func(t *testing.T, recorder *httptest.ResponseRecorder)
 	}{
 		{
 			name:      "ok",
 			accountId: expectAccount.ID,
+			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
+				addAuthorizationHeader(t, request, tokenMaker, authorizationTypeBearer, user.Username, time.Minute)
+			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.
 					EXPECT().
@@ -52,6 +60,9 @@ func TestGetAccountByID(t *testing.T) {
 		{
 			name:      "notFound",
 			accountId: expectAccount.ID,
+			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
+				addAuthorizationHeader(t, request, tokenMaker, authorizationTypeBearer, user.Username, time.Minute)
+			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.
 					EXPECT().
@@ -68,6 +79,9 @@ func TestGetAccountByID(t *testing.T) {
 		{
 			name:      "internalServerError",
 			accountId: expectAccount.ID,
+			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
+				addAuthorizationHeader(t, request, tokenMaker, authorizationTypeBearer, user.Username, time.Minute)
+			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.
 					EXPECT().
@@ -84,6 +98,9 @@ func TestGetAccountByID(t *testing.T) {
 		{
 			name:      "badReqeust",
 			accountId: -1,
+			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
+				addAuthorizationHeader(t, request, tokenMaker, authorizationTypeBearer, user.Username, time.Minute)
+			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.
 					EXPECT().
@@ -114,6 +131,8 @@ func TestGetAccountByID(t *testing.T) {
 
 			reqeust, err := http.NewRequest(http.MethodGet, url, nil)
 			require.NoError(t, err)
+			tc.setupAuth(t, reqeust, server.token)
+
 			server.router.ServeHTTP(recorder, reqeust)
 			tc.checkResponse(t, recorder)
 		})
@@ -146,7 +165,8 @@ func TestGetAccountByID(t *testing.T) {
 	// matchAccount(t, recorder.Body, expectAccount)
 }
 
-func createRandomAccount() (account db.Account) {
+func createRandomAccount(owner string) (account db.Account) {
+	account.Owner = owner
 	account.ID = util.RandomInt(10, 10)
 	account.Balance = 0
 	account.Currency = util.RandomCurrency()

@@ -55,6 +55,7 @@ func setCostumeBindingValidator() error {
 	}
 	return fmt.Errorf("error seting binnding gin")
 }
+
 func (server *server) setGinRouter() {
 	// Default router With the Logger and Recovery middleware already attached
 	router := gin.Default()
@@ -72,13 +73,15 @@ func (server *server) setGinRouter() {
 	//similar with handle func
 	router.POST("/createUser", server.createUser)
 
-	router.POST("/createAccount", server.createAccount)
-	router.GET("/account/:id", server.getAccountByID)
-	router.GET("/account", server.getListAccount)
-
-	router.POST("/transfer", server.createTransfer)
-
 	router.POST("/user/login", server.userLogin)
+
+	//goruping to use middleWare
+	authRouter := router.Group("/", authMiddleWare(server.token))
+
+	authRouter.POST("/createAccount", server.createAccount)
+	authRouter.GET("/account/:id", server.getAccountByID)
+	authRouter.GET("/account", server.getListAccount)
+	authRouter.POST("/transfer", server.createTransfer)
 
 	server.router = router
 }
