@@ -15,17 +15,20 @@ func main() {
 	//load config file using viper
 	cf, err := util.LoadConfig(".")
 	if err != nil {
-		log.Panic(err)
+		log.Fatal(err)
 	}
 	//db connection
 	coon, err := sql.Open(cf.DBDriver, cf.DBSource)
 	if err != nil {
-		log.Panic(err)
+		log.Fatal(err)
 	}
 	//NewStore new struct of db conn and embbed querries
 	store := db.NewStore(coon)
 	//server config
-	srv := api.NewServer(store)
+	srv, err := api.NewServer(cf, store)
+	if err != nil {
+		log.Fatal(err)
+	}
 	// servErr := make(chan os.Signal)
 	err = srv.StartServerAddress(cf.ServerAddress)
 

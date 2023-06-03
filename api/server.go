@@ -1,11 +1,14 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
 	cv "github.com/MikoBerries/SimpleBank/api/costumValidator"
 	db "github.com/MikoBerries/SimpleBank/db/sqlc"
+	"github.com/MikoBerries/SimpleBank/token"
+	"github.com/MikoBerries/SimpleBank/util"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -13,14 +16,46 @@ import (
 
 type server struct {
 	store  db.Store
+	token  token.Maker
+	config util.Config
 	router *gin.Engine
 }
 
 //NewServer Create new Server with gin router
-func NewServer(store db.Store) *server {
-	s := &server{}
-	s.store = store
+func NewServer(config util.Config, store db.Store) (*server, error) {
+	server := &server{}
+	//sign db transaction logic (sqlc)
+	server.store = store
+	//sign config file connection (viper)
+	server.config = config
+	//crete tokeMaker and sign it to server
+	tokenMaker, err := token.NewPasetoMaker(server.config.TokenSymmetricKey)
+	if err != nil {
+		return nil, err
+	}
+	//sign token maker (Paseto / JWT)
+	server.token = tokenMaker
 
+	//Register our costum validator to default gin (validator/v10)
+	err = setCostumeBindingValidator()
+	if err != nil {
+		return nil, err
+	}
+	//sign router (Gin)
+	server.setGinRouter()
+	return server, nil
+}
+
+func setCostumeBindingValidator() error {
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		//adding own costum validator ("tag-name", func(validator.FieldLevel)bool )
+		v.RegisterValidation("bookabledate", cv.BookableDate)
+		v.RegisterValidation("IsCurrency", cv.IsCurrency)
+		return nil
+	}
+	return fmt.Errorf("error seting binnding gin")
+}
+func (server *server) setGinRouter() {
 	// Default router With the Logger and Recovery middleware already attached
 	router := gin.Default()
 
@@ -35,23 +70,17 @@ func NewServer(store db.Store) *server {
 	// router.Group("/").Use(AuthRequired())
 
 	//similar with handle func
-	router.POST("/createUser", s.createUser)
+	router.POST("/createUser", server.createUser)
 
-	router.POST("/createAccount", s.createAccount)
-	router.GET("/account/:id", s.getAccountByID)
-	router.GET("/account", s.getListAccount)
+	router.POST("/createAccount", server.createAccount)
+	router.GET("/account/:id", server.getAccountByID)
+	router.GET("/account", server.getListAccount)
 
-	router.POST("/transfer", s.createTransfer)
+	router.POST("/transfer", server.createTransfer)
 
-	//register our costum validator to default gin (validator/v10)
-	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-		//adding own costum validator ("tag-name", func(validator.FieldLevel)bool )
-		v.RegisterValidation("bookabledate", cv.BookableDate)
-		v.RegisterValidation("IsCurrency", cv.IsCurrency)
-	}
+	router.POST("/user/login", server.userLogin)
 
-	s.router = router
-	return s
+	server.router = router
 }
 
 //StartServerAddress start server with given adress and some configuration

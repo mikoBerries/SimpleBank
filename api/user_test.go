@@ -103,7 +103,7 @@ func TestCreateUser(t *testing.T) {
 			// access buildstubs function and run it using store as argument
 			tc.buildStubs(store)
 
-			server := NewServer(store)
+			server := newTestServer(t, store)
 			recorder := httptest.NewRecorder()
 
 			//make http.NewRequest params
@@ -198,7 +198,7 @@ func randomUser(t *testing.T) (db.User, string) {
 // 		// access buildstubs function and run it using store as argument
 // 		tc.buildStubs(store)
 
-// 		server := NewServer(store)
+// 		server := NewTestServer(t,store)
 // 		recorder := httptest.NewRecorder()
 
 // 		url := fmt.Sprintf("/account/%d", tc.accountId)
@@ -221,7 +221,7 @@ func randomUser(t *testing.T) (db.User, string) {
 
 // //create server to send test request to API
 // //get gin router using store DB conn
-// server := NewServer(store)
+// server := NewTestServer(t,store)
 // recorder := httptest.NewRecorder()
 
 // //url API to test request

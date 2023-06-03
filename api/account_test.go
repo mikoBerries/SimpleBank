@@ -107,7 +107,7 @@ func TestGetAccountByID(t *testing.T) {
 			// access buildstubs function and run it using store as argument
 			tc.buildStubs(store)
 
-			server := NewServer(store)
+			server := newTestServer(t, store)
 			recorder := httptest.NewRecorder()
 
 			url := fmt.Sprintf("/account/%d", tc.accountId)
@@ -130,7 +130,7 @@ func TestGetAccountByID(t *testing.T) {
 
 	// //create server to send test request to API
 	// //get gin router using store DB conn
-	// server := NewServer(store)
+	// server := NewTestServer(t,store)
 	// recorder := httptest.NewRecorder()
 
 	// //url API to test request
