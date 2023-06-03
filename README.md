@@ -111,7 +111,7 @@ paseto lib
 https://paseto.io/
 paseto generator online
 https://token.dev/paseto/
-Paserk paseto extendsion written in fotter
+Paserk paseto extendsion provides key-wrapping and serialization written in footer
 https://github.com/paseto-standard/paserk
 cross compabilty on other language
 https://paseto.io/
@@ -119,3 +119,7 @@ https://paseto.io/
 ------ 
 explanation of "var _ Interface = (*Type)(nil)"
 https://github.com/uber-go/guide/issues/25
+.yaml 
+https://learnxinyminutes.com/docs/yaml/
+Bash
+https://learnxinyminutes.com/docs/bash/
