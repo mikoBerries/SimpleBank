@@ -106,7 +106,15 @@ ATDD in short explanation:
 https://www.techtarget.com/searchsoftwarequality/definition/test-driven-development
 https://www.browserstack.com/guide/tdd-vs-bdd-vs-atdd
 
-
+* PASETP
+paseto lib
+https://paseto.io/
+paseto generator online
+https://token.dev/paseto/
+Paserk paseto extendsion written in fotter
+https://github.com/paseto-standard/paserk
+cross compabilty on other language
+https://paseto.io/
 * ETC
 ------ 
 explanation of "var _ Interface = (*Type)(nil)"

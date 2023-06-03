@@ -35,6 +35,8 @@ func NewServer(store db.Store) *server {
 	// router.Group("/").Use(AuthRequired())
 
 	//similar with handle func
+	router.POST("/createUser", s.createUser)
+
 	router.POST("/createAccount", s.createAccount)
 	router.GET("/account/:id", s.getAccountByID)
 	router.GET("/account", s.getListAccount)
