@@ -59,7 +59,7 @@ jobs:
       ##check mod file and download /tidy
       - name: Build Module
         run: |
-          go list -m c
+          go list -m
           go mod download 
 
       - name: Test
