@@ -36,30 +36,31 @@ jobs:
           --health-retries 5
         
     steps:
-
+      ##github action to download and set go language in runner machine
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: 1.19
-
+          go-version: '1.20'
+      ##grab all code from this github repo
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
-       ##check mod file
+    
       - name: Check go enviroment
         run: go env
 
+      ##check mod file and download /tidy
+      - name: Build Module
+        run: |
+          go mod download 
+      ##Instal dependency To make fulfil ci test requerment 
       - name : Install dependency
         run: |
           curl -L https://github.com/golang-migrate/migrate/releases/download/v4.16.0/migrate.linux-amd64.tar.gz | tar xvz
           sudo mv migrate /usr/bin/
           which migrate
-
+      ##setup db schema(postgres)
       - name : Migrate Database
         run: make migrateup
-      ##check mod file and download /tidy
-      - name: Build Module
-        run: |
-          go mod download 
-
-      - name: Test
+      ##CI all file
+      - name: Test Code
         run: make test
