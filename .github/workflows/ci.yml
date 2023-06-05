@@ -44,9 +44,6 @@ jobs:
       ##grab all code from this github repo
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
-    
-      - name: Check go enviroment
-        run: go env
 
       ##check mod file and download /tidy
       - name: Build Module

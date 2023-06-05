@@ -1,1 +1,35 @@
-##
+##Build Code stage
+FROM golang:1.20.4-alpine3.18 AS builder
+WORKDIR /app
+COPY . .
+RUN apk add curl
+RUN curl -L https://github.com/golang-migrate/migrate/releases/download/v4.16.0/migrate.linux-amd64.tar.gz | tar xvz
+        
+RUN go build -o main main.go
+
+
+##Run Stage in alpine images to make smaller images
+FROM alpine:3.18
+WORKDIR /app
+##Copy from builder stages
+COPY --from=builder /app/main .
+COPY --from=builder /app/migrate ./migrate
+##Copy settings
+COPY db/migrations ./migrations
+COPY app.env .
+COPY start.sh .
+COPY wait-for.sh .
+
+##run command to get devtollkit
+##RUN apk add --no-cache curl \
+##                       wget \
+##                      netcat-openbsd \
+##                       socat \
+##                       bind-tools \
+##                       tcpdump \
+##                       bash
+##expose port in image
+EXPOSE 8080
+##array of cmd command
+CMD [ "/app/main" ] 
+ENTRYPOINT [ "/app/start.sh" ]

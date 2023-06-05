@@ -120,6 +120,12 @@ https://www.browserstack.com/guide/tdd-vs-bdd-vs-atdd
 2. Docker build Documentation:
 - https://docs.docker.com/engine/reference/commandline/build/
 
+3. Connecting docker container with docker network
+- create a new docker network and listed images to network
+
+4. Create docker serveral docker images with docker-compose.yaml
+- With docker-compose.yaml we can automated creating serveral docker images and listed it to same network automaticly
+
 ## ETC
 ------ 
 * explanation of "var _ Interface = (*Type)(nil)"
