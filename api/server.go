@@ -2,8 +2,6 @@ package api
 
 import (
 	"fmt"
-	"net/http"
-	"time"
 
 	cv "github.com/MikoBerries/SimpleBank/api/costumValidator"
 	db "github.com/MikoBerries/SimpleBank/db/sqlc"
@@ -21,7 +19,7 @@ type server struct {
 	router *gin.Engine
 }
 
-//NewServer Create new Server with gin router
+// NewServer Create new Server with gin router
 func NewServer(config util.Config, store db.Store) (*server, error) {
 	server := &server{}
 	//sign db transaction logic (sqlc)
@@ -86,14 +84,15 @@ func (server *server) setGinRouter() {
 	server.router = router
 }
 
-//StartServerAddress start server with given adress and some configuration
+// StartServerAddress start server with given adress and some configuration
 func (server *server) StartServerAddress(addrs string) error {
-	s := &http.Server{
-		Addr:           addrs,
-		Handler:        server.router,
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
-		MaxHeaderBytes: 1 << 20,
-	}
-	return s.ListenAndServe()
+	// s := &http.Server{
+	// 	Addr:           addrs,
+	// 	Handler:        server.router,
+	// 	ReadTimeout:    10 * time.Second,
+	// 	WriteTimeout:   10 * time.Second,
+	// 	MaxHeaderBytes: 1 << 20,
+	// }
+	// return s.ListenAndServe()
+	return server.router.Run(addrs)
 }

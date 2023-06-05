@@ -24,6 +24,6 @@ func newTestServer(t *testing.T, store db.Store) *server {
 
 func TestMain(m *testing.M) {
 
-	gin.SetMode(gin.ReleaseMode)
+	gin.SetMode(gin.DebugMode)
 	os.Exit(m.Run())
 }
