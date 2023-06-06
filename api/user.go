@@ -1,12 +1,14 @@
 package api
 
 import (
+	"database/sql"
 	"net/http"
 	"time"
 
 	db "github.com/MikoBerries/SimpleBank/db/sqlc"
 	"github.com/MikoBerries/SimpleBank/util"
 	"github.com/gin-gonic/gin"
+	"github.com/gofrs/uuid"
 	"github.com/lib/pq"
 )
 
@@ -35,7 +37,7 @@ func newUserResponse(user db.User) userResponse {
 	}
 }
 
-//createAccount create new account with 0 balance
+// createAccount create new account with 0 balance
 func (server *server) createUser(ctx *gin.Context) {
 	var req newUserRequest
 	//Unmarshal request with tag validation
@@ -82,8 +84,12 @@ type loginUserRequest struct {
 }
 
 type loginUserResponse struct {
-	AccessToken string       `json:"acc_token"`
-	User        userResponse `json:"user"`
+	SessionId             uuid.UUID    `json:"session_id"`
+	AccessToken           string       `json:"acc_token"`
+	AccesTokenExpiresAt   time.Time    `json:"access_token_expires_at"`
+	RefreshToken          string       `json:"refresh_token"`
+	RefreshTokenExpiresAt time.Time    `json:"refresh_token_expires_at"`
+	User                  userResponse `json:"user"`
 }
 
 func (server *server) userLogin(ctx *gin.Context) {
@@ -94,26 +100,64 @@ func (server *server) userLogin(ctx *gin.Context) {
 	}
 	user, err := server.store.GetUser(ctx, req.Username)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
-
 	}
+
 	//check naked password and hashed in db
 	err = util.CheckPassword(req.Password, user.HashedPassword)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
-
 	}
-	accessToken, err := server.token.CreateToken(user.Username, server.config.AccessTokenDuration)
+	accessToken, accessTokenPayload, err := server.token.CreateToken(user.Username, server.config.AccessTokenDuration)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
+	}
 
+	//Generate Token for session
+	refreshToken, refeshTokenPayload, err := server.token.CreateToken(user.Username, server.config.RefeshTokenDuration)
+	//Token ID and ExpiredAt is in inside token payload
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
+	//convert to uuid
+	uuid, err := uuid.FromString(refeshTokenPayload.ID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	arg := db.CreateSessionParams{
+		ID:           uuid,
+		Username:     user.Username,
+		RefreshToken: refreshToken,
+		UserAgent:    ctx.Request.UserAgent(),
+		ClientIp:     ctx.ClientIP(),
+		IsBlocked:    false,
+		ExpiresAt:    refeshTokenPayload.ExpiresAt.Time,
+	}
+	resultSession, err := server.store.CreateSession(ctx, arg)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 	rsp := loginUserResponse{
-		AccessToken: accessToken,
-		User:        newUserResponse(user),
+		SessionId:             resultSession.ID,
+		AccessToken:           accessToken,
+		AccesTokenExpiresAt:   accessTokenPayload.ExpiresAt.Time,
+		RefreshToken:          refreshToken,
+		RefreshTokenExpiresAt: refeshTokenPayload.ExpiresAt.Time,
+		User:                  newUserResponse(user),
 	}
+
 	ctx.JSON(http.StatusOK, rsp)
 }

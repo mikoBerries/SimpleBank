@@ -72,6 +72,7 @@ func (server *server) setGinRouter() {
 	router.POST("/createUser", server.createUser)
 
 	router.POST("/user/login", server.userLogin)
+	router.POST("/token/renew_access", server.renewAccessTokenRequest)
 
 	//goruping to use middleWare
 	authRouter := router.Group("/", authMiddleWare(server.token))
