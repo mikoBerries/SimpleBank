@@ -126,6 +126,63 @@ https://www.browserstack.com/guide/tdd-vs-bdd-vs-atdd
 4. Create docker serveral docker images with docker-compose.yaml
 - With docker-compose.yaml we can automated creating serveral docker images and listed it to same network automaticly
 
+5. Creating free tier AWS account
+- AWS giving free tier service with some limitation : 
+https://aws.amazon.com/free/?all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc&awsf.Free%20Tier%20Types=*all&awsf.Free%20Tier%20Categories=*all
+
+6. Secret Enviroment can be stored at Github Action so it;ll not writen as plain text in code (secret user & password for acces AWS)
+
+7. AWS Services
+    1. AWS IAM
+        - AWS Identity Access Manager service to create/manage user to AWS services 
+    2. AWS ECR 
+        - Amazon Elastic Container Registry (Amazon ECR) provides API operations to create, monitor, and delete image repositories
+        - AWS ECR is build in aws service for Container running.
+    3. AWS RDS
+        - Amazon Relational Database Service (RDS) is a fully managed, open-source cloud database service that allows you to easily operate and scale
+    4. AWS Secret manager (https://aws.amazon.com/secrets-manager/)
+        - AWS Secrets Manager helps you manage, retrieve, and rotate database credentials, API keys, and other secrets throughout their lifecycles.
+        - To store aplication Secret enviroment to AWS server, so when docker aplication container was building it'll use AWS env value
+        - it's also support to do job function rotating some secret value that we already store (rotating for :Token cridential ,ETC)
+    5. AWS EKS
+        - Amazon Elastic Kubernetes Service service that running kubernetes on server.
+        - use kubectl to remote access AWS EKS : https://kubernetes.io/docs/tasks/tools/
+        - other lib k9s more convinion to use (https://k9scli.io/)
+            - k9s windows run in power shell and need kubectl set as well
+
+8. AWS Command Line Interface (AWS CLI)
+    - Commandline to access and manage AWS easyly
+    - https://aws.amazon.com/cli/
+    - insert aws.exe to global variable path (windows)
+    - Setup AWS configuration set default config aws cli using (Acess Key ID & Password , region server & output)
+```console
+aws configure
+```
+
+9. Kubernetes explained (Cluster -> Node -> Pod)
+    - Cluster:
+        - A group of multiple node in Kube Enviroment.
+        - To orchestrate is to design or organize Containerized apps (Docker images) through Nodes and Pods.
+        - Containing several Node.
+    - Node :
+        - A physical or virtual machine.
+        - To Provides the compute resource to run Containerized apps.
+        - Containing several Pod.
+    - Pod :
+        - A The smallest deployable unit in a Kubernetes cluster
+        - To Isolates containers from underlying servers to boost portability
+        - Containing application container that running on it (Docker images) 
+    - https://kubernetes.io/docs/concepts/overview/
+
+
+
+##
+
+1. Redis
+    - Best practices https://climbtheladder.com/10-redis-key-best-practices/
+2. GRPC VS REST api
+    - https://blog.dreamfactory.com/grpc-vs-rest-how-does-grpc-compare-with-traditional-rest-apis/#:~:text=Here%20are%20the%20main%20differences,usually%20leverages%20JSON%20or%20XML.
+    - https://learning.postman.com/docs/sending-requests/grpc/first-grpc-request/
 ## ETC
 ------ 
 * explanation of "var _ Interface = (*Type)(nil)"
