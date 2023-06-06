@@ -126,6 +126,17 @@ https://www.browserstack.com/guide/tdd-vs-bdd-vs-atdd
 4. Create docker serveral docker images with docker-compose.yaml
 - With docker-compose.yaml we can automated creating serveral docker images and listed it to same network automaticly
 
+
+## Section Session & GRPC
+1. Session
+    - Diffrent session and Token (JWT / PASETO):
+        -Token are "Stateless" meaning there not stored in server side (server alwas validating every request come)
+        -
+2. GRPC VS REST api
+    - https://blog.dreamfactory.com/grpc-vs-rest-how-does-grpc-compare-with-traditional-rest-apis/#:~:text=Here%20are%20the%20main%20differences,usually%20leverages%20JSON%20or%20XML.
+    - https://learning.postman.com/docs/sending-requests/grpc/first-grpc-request/
+3. Redis
+    - Best practices https://climbtheladder.com/10-redis-key-best-practices/
 ## ETC
 ------ 
 * explanation of "var _ Interface = (*Type)(nil)"
