@@ -166,10 +166,28 @@ https://www.browserstack.com/guide/tdd-vs-bdd-vs-atdd
     ```
     - DBML CLI make dbml-error.log file as error output even it's nothings wrong.
 
-3. GRPC VS REST api
+3. GRPC are Remote Procedure Call Framework
+    - using GRPC ProtoBuff tolls can server Both GRPC and HTTP request
+    - website https://grpc.io/
+4. Protocol Buffer (https://protobuf.dev/programming-guides/proto3/) V3
+    - protocol buffer instalation (https://grpc.io/docs/protoc-installation/) windows user using Install pre-compiled binaries (https://github.com/google/protobuf/releases)
+    - for golang Install the protocol compiler plugins for Go using the following commands:
+    ```console
+    $ go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
+    $ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
+    ```
+    - Protobuff extendsion vs code : https://marketplace.visualstudio.com/items?itemName=zxh404.vscode-proto3&ssr=false#overview
+    - generate protobuf
+    ```console
+    $ protoc --go_out=. --go_opt=paths=source_relative \
+    --go-grpc_out=. --go-grpc_opt=paths=source_relative \
+    helloworld/helloworld.proto
+    ```
+4. GRPC VS REST api
+
     - https://blog.dreamfactory.com/grpc-vs-rest-how-does-grpc-compare-with-traditional-rest-apis/#:~:text=Here%20are%20the%20main%20differences,usually%20leverages%20JSON%20or%20XML.
     - https://learning.postman.com/docs/sending-requests/grpc/first-grpc-request/
-4. Redis
+5. Redis
     - Best practices https://climbtheladder.com/10-redis-key-best-practices/
 ## ETC
 ------ 

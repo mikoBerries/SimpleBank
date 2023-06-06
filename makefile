@@ -29,6 +29,10 @@ mock:
 dockerBuild :
 	docker build -t simplebank:lastest .
 
+protoc:
+	rm -f pb/*.go
+	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative --go-grpc_out=pb --go-grpc_opt=paths=source_relative proto/*.proto
+
 test:
 	go test -v -cover ./...
 cleantest:
@@ -36,4 +40,4 @@ cleantest:
 server:
 	go run main.go
 
-PHONY: postgres createdb dropdb migrateup migratedown test cleantest server mock migrateup1 migratedown1 dockerBuild sb dbdocs dbml2sql
+PHONY: postgres createdb dropdb migrateup migratedown test cleantest server mock migrateup1 migratedown1 dockerBuild sb dbdocs dbml2sql proto
