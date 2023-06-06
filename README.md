@@ -126,6 +126,16 @@ https://www.browserstack.com/guide/tdd-vs-bdd-vs-atdd
 4. Create docker serveral docker images with docker-compose.yaml
 - With docker-compose.yaml we can automated creating serveral docker images and listed it to same network automaticly
 
+
+## Section Session & GRPC
+1. Session token and Access Token
+- Refresh tokens provide a way to bypass the temporary nature of access tokens. Normally, a user with an access token can only access protected resources or perform specific actions for a set period of time, which reduces the risk of the token being compromised. A refresh token allows the user to get a new access token without needing to log in again.
+- Refresh Token best practice :https://stateful.com/blog/refresh-tokens-security 
+2. GRPC VS REST api
+    - https://blog.dreamfactory.com/grpc-vs-rest-how-does-grpc-compare-with-traditional-rest-apis/#:~:text=Here%20are%20the%20main%20differences,usually%20leverages%20JSON%20or%20XML.
+    - https://learning.postman.com/docs/sending-requests/grpc/first-grpc-request/
+3. Redis
+    - Best practices https://climbtheladder.com/10-redis-key-best-practices/
 ## ETC
 ------ 
 * explanation of "var _ Interface = (*Type)(nil)"

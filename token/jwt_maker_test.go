@@ -16,10 +16,11 @@ func TestJWTMaker(t *testing.T) {
 	username := "Mikoberries"
 	duration := time.Minute
 	role := "user"
-	token, err := maker.CreateToken(username, duration)
+	token, payload, err := maker.CreateToken(username, duration)
 	require.NoError(t, err)
+	require.NotEmpty(t, payload)
 
-	payload, err := maker.VerifyToken(token)
+	payload, err = maker.VerifyToken(token)
 	require.NoError(t, err)
 	require.NotEmpty(t, payload)
 	//do payload func valid() embed in standart jwt claim
@@ -39,8 +40,9 @@ func TestExpiredJWTMaker(t *testing.T) {
 	username := "Mikoberries"
 	duration := -1 * time.Minute
 	// role := "user"
-	token, err := maker.CreateToken(username, duration)
+	token, payload, err := maker.CreateToken(username, duration)
 	require.NoError(t, err)
+	require.NotEmpty(t, payload)
 
 	_, err = maker.VerifyToken(token)
 	require.Error(t, err)

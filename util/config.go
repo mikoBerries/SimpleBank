@@ -12,9 +12,10 @@ type Config struct {
 	ServerAddress       string        `mapstructure:"SERVER_ADDRESS"`
 	TokenSymmetricKey   string        `mapstructure:"TOKEN_SYMMETRIC_KEY"`
 	AccessTokenDuration time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`
+	RefeshTokenDuration time.Duration `mapstructure:"REFESH_TOKEN_DURATION"`
 }
 
-//LoadConfig load configfile and returning config struct
+// LoadConfig load configfile and returning config struct
 func LoadConfig(path string) (cf Config, err error) {
 	//set param to viper class
 	viper.AddConfigPath(path)  //set Path to config file

@@ -10,26 +10,26 @@ import (
 
 const minSecretKeySize = 32
 
-//JWTMaker
+// JWTMaker
 type JWTMaker struct {
 	secretKey string
 }
 
 // CreateToken implements Maker.
-func (m *JWTMaker) CreateToken(username string, duration time.Duration) (string, error) {
+func (m *JWTMaker) CreateToken(username string, duration time.Duration) (string, *Payload, error) {
 	payload, err := NewPayload(username, duration)
 	if err != nil {
-		return "", err
+		return "", payload, err
 	}
 	//make token with header method and payload/claims
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
 	//finish jwt with signed it with secret key
 	jwt, err := token.SignedString([]byte(m.secretKey))
 	if err != nil {
-		return "", err
+		return "", payload, err
 	}
 
-	return jwt, nil
+	return jwt, payload, nil
 }
 
 // VerifyToken implements Maker.
