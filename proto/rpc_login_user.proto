@@ -3,7 +3,7 @@ syntax = "proto3";
 package pb;
 
 import "user.proto";
-import "google/protobuf/Timestamp.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/MikoBerries/SimpleBank/pb";
 

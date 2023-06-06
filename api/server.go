@@ -12,6 +12,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+// Server serve HTTP request for apps sevices.
 type server struct {
 	store  db.Store
 	token  token.Maker
