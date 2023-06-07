@@ -198,7 +198,12 @@ ATDD in short explanation:
     helloworld/helloworld.proto
     ```
     - Protobuf support scalar type and explanation (https://protobuf.dev/programming-guides/proto3/#scalar)
-
+    - Protoc can produce open api documentation
+    ```console
+    --openapiv2_out=doc/swagger
+    ```
+    - Some option we can use for protoc generation write inside protobuffer services. >>>>> Do not Forget to copy .proto file to project path as import depedency
+        - https://github.com/grpc-ecosystem/grpc-gateway/blob/main/examples/internal/proto/examplepb/a_bit_of_everything.proto
 6. GRPC tools to testing
     - evans : https://github.com/ktr0731/evans
     ```console
@@ -249,3 +254,5 @@ ATDD in short explanation:
     - https://www.mertech.com/blog/the-anatomy-of-a-web-api
 13. Phyton Framework Django vs Flask
     - https://www.interviewbit.com/blog/flask-vs-django/
+14. Swagger hub to populate api documentation (exmaple file in doc/swagger/*.json)
+    - https://swagger.io/tools/swaggerhub/

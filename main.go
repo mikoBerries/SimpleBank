@@ -77,6 +77,9 @@ func runHTTPServer(cf util.Config, store db.Store) {
 	//handle all path
 	mux.Handle("/", grpcMux)
 
+	fl := http.FileServer(http.Dir("./doc/swagger"))
+	mux.Handle("/swagger/", http.StripPrefix("/swagger/", fl))
+
 	//lsitener to listen Tcp in 8080 port
 	listener, err := net.Listen("tcp", cf.HttpServerAddress)
 	if err != nil {
