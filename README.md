@@ -69,6 +69,7 @@ https://www.geeksforgeeks.org/acid-properties-in-dbms/
 
 3. Mock Testing
     - Mock testing are using "White Box" testing techniques, used to testing every functional func in code. (https://github.com/golang/mock)
+    - Stub is replacement for some dependency in your code that will be used during test execution. It is typically built for one particular test and unlikely can be reused for another because it has hardcoded expectations and assumptions.
 
 4. Testing Method  TDD / BDD / ATDD
 * TDD (test-driven development) approach with step:
@@ -163,11 +164,26 @@ ATDD in short explanation:
     ```
     - DBML CLI make dbml-error.log file as error output even it's nothings wrong.
 
-3. GRPC are Remote Procedure Call Framework
+3. RPC Remote Procedure Call
+    - https://medium.com/programmer-geek/mengenal-rpc-remote-procedure-call-7d8a794bbd1f
+    - https://www.techtarget.com/searchapparchitecture/definition/Remote-Procedure-Call-RPC
+    - Few list of RPC framework:
+        1. gRPC: gRPC is a high-performance, open-source RPC framework that uses HTTP/2 as the transport layer and Protocol Buffers as the serialization format.
+        2. Apache Thrift: Apache Thrift is another popular RPC framework that is available for a variety of languages.
+        3. ZeroMQ: ZeroMQ is a lightweight, asynchronous RPC framework that is often used in distributed systems and microservices architectures.
+        4. RabbitMQ: RabbitMQ is a popular message broker that can be used to implement RPC. 
+        5. Amazon Web Services (AWS) Lambda: AWS Lambda is a serverless computing platform that can be used to implement RPC. 
+
+4. GRPC / Google RPC Framework
     - using GRPC ProtoBuff tolls can server Both GRPC and HTTP request
+    - 4 types of gRPC
+        1. Unary. (1 : 1)
+        2. Server Streaming. (1 : many)
+        3. Client Streaming. (many : 1)
+        4. Bi-directional streaming. (many : many)
     - website https://grpc.io/
 
-4. Protocol Buffer (https://protobuf.dev/programming-guides/proto3/) V3
+5. Protocol Buffer (https://protobuf.dev/programming-guides/proto3/) V3
     - protocol buffer instalation (https://grpc.io/docs/protoc-installation/) windows user using Install pre-compiled binaries (https://github.com/google/protobuf/releases)
     - for golang Install the protocol compiler plugins for Go using the following commands:
     ```console
@@ -182,7 +198,8 @@ ATDD in short explanation:
     helloworld/helloworld.proto
     ```
     - Protobuf support scalar type and explanation (https://protobuf.dev/programming-guides/proto3/#scalar)
-4. GRPC tools to testing
+
+6. GRPC tools to testing
     - evans : https://github.com/ktr0731/evans
     ```console
     evans --host localhost -p 9090 -r repl
@@ -190,21 +207,45 @@ ATDD in short explanation:
     - Postman also support gRPC too.
     - To use Service definition using server reflection, gRPC server mus registeret to pakcage reflection
         - reflection.Register(grpcServer)
+7. gRPC gateway
+    - gRPC-Gateway is a plugin of protoc. It reads a gRPC service definition and generates a reverse-proxy server which translates a RESTful JSON API into gRPC.
+    - This project aims to provide that HTTP+JSON interface to your gRPC service because, you might still want to provide a traditional RESTful JSON API as well. Reasons can range from maintaining backward-compatibility, supporting languages or clients that are not well supported by gRPC
+    - Source code : https://github.com/grpc-ecosystem/grpc-gateway
 
-4. GRPC VS REST api
+8. Authentication in GRPC
+    - SSL/TLS: gRPC has SSL/TLS integration and promotes the use of SSL/TLS to authenticate the server.
+    - ALTS: gRPC supports ALTS as a transport security mechanism.
+    - Token-based authentication with Google : gRPC provides a generic mechanism to attach metadata based credentials to requests and responses.
+        - Google credentials should only be used to connect to Google services. Sending a Google issued OAuth2 token to a non-Google service could result in this token being stolen and used to impersonate the client to Google services.
+    - https://grpc.io/docs/guides/auth/
 
-    - https://blog.dreamfactory.com/grpc-vs-rest-how-does-grpc-compare-with-traditional-rest-apis/#:~:text=Here%20are%20the%20main%20differences,usually%20leverages%20JSON%20or%20XML.
-    - https://learning.postman.com/docs/sending-requests/grpc/first-grpc-request/
-5. Redis
+8. Redis
     - Best practices https://climbtheladder.com/10-redis-key-best-practices/
 ## ETC
 ------ 
 1. explanation of "var _ Interface = (*Type)(nil)"
-    https://github.com/uber-go/guide/issues/25
+    - https://github.com/uber-go/guide/issues/25
 2. .yaml 
-    https://learnxinyminutes.com/docs/yaml/
+    - https://learnxinyminutes.com/docs/yaml/
 3. Bash
-    https://learnxinyminutes.com/docs/bash/
+    - https://learnxinyminutes.com/docs/bash/
 4. Some API management tools that support gRPC testing include Postman, Insomnia, Kreya. app, and BloomRPC
-5. GRPC Status code (1 - 16) and some case code will procude:
+5. iana standart HTTP/2 response code
+    - https://www.iana.org/assignments/http2-parameters/http2-parameters.xhtml
+6. GRPC Status code (1 - 16) and some case code will procude:
     - https://grpc.github.io/grpc/core/md_doc_statuscodes.html
+7. GRPC vs WebSocket
+    - https://www.wallarm.com/what/grpc-vs-websocket-when-is-it-better-to-use
+8. GRPC VS REST api
+    - https://blog.dreamfactory.com/grpc-vs-rest-how-does-grpc-compare-with-traditional-rest-apis/#:~:text=Here%20are%20the%20main%20differences,usually%20leverages%20JSON%20or%20XML.
+    - https://learning.postman.com/docs/sending-requests/grpc/first-grpc-request/
+9. MQTT
+    - https://aws.amazon.com/what-is/mqtt/
+10. Networking Technique Multiplexing (Multiplexers and de-Multiplexers)
+    - https://www.tutorialspoint.com/data_communication_computer_network/physical_layer_multiplexing.htm
+11. Serialization data
+    - https://hazelcast.com/glossary/serialization/
+12. Anatomy of API (Application Programming Interface)
+    - https://www.mertech.com/blog/the-anatomy-of-a-web-api
+13. Phyton Framework Django vs Flask
+    - https://www.interviewbit.com/blog/flask-vs-django/
