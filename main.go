@@ -1,17 +1,21 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"log"
 	"net"
+	"net/http"
 
 	"github.com/MikoBerries/SimpleBank/api"
 	db "github.com/MikoBerries/SimpleBank/db/sqlc"
 	"github.com/MikoBerries/SimpleBank/gapi"
 	"github.com/MikoBerries/SimpleBank/pb"
 	"github.com/MikoBerries/SimpleBank/util"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/protobuf/encoding/protojson"
 
 	_ "github.com/lib/pq"
 )
@@ -33,8 +37,56 @@ func main() {
 	//uncomment this to use gin server
 	//runGRPCServer(cf,store)
 
+	//run HTPP proxy server
+	go runHTTPServer(cf, store)
 	//use GRPC server
 	runGRPCServer(cf, store)
+}
+
+// runHTTPServer are gPRC Proxy server to serve Http json and forwading to gRPC server
+func runHTTPServer(cf util.Config, store db.Store) {
+	server, err := gapi.NewServer(cf, store)
+	if err != nil {
+		log.Fatal(err)
+	}
+	ctx := context.Background()
+	//embed context with cancel
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+	//multiplexer server
+
+	gatewayOption := runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
+		MarshalOptions: protojson.MarshalOptions{ //marshal func option
+			UseProtoNames: true, // use callback name from .proto file
+		},
+		UnmarshalOptions: protojson.UnmarshalOptions{
+			DiscardUnknown: true, //discard eveeything unknow field
+		},
+	})
+
+	grpcMux := runtime.NewServeMux(gatewayOption)
+
+	// err = pb.RegisterSimplebankHandlerFromEndpoint(ctx, grpcMux, server, nil)
+	//register handler path from gAPI to grpc mux
+	err = pb.RegisterSimplebankHandlerServer(ctx, grpcMux, server)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	mux := http.NewServeMux()
+	//handle all path
+	mux.Handle("/", grpcMux)
+
+	//lsitener to listen Tcp in 8080 port
+	listener, err := net.Listen("tcp", cf.HttpServerAddress)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("Starting HTTP Proxy server at %s", listener.Addr().String())
+	err = http.Serve(listener, mux)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func runGRPCServer(cf util.Config, store db.Store) {
