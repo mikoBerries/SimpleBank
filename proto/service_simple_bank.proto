@@ -28,11 +28,38 @@ service simplebank {
             post: "/v1/create_user",
             body:"*"
         };
+
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Create user api Function";
+            summary: "To Create new User";
+            responses: {
+              key: "0"
+              value: {
+                examples: {
+                  key: "application/json"
+                  value: "{\"value\": \"the input value\"}"
+                }
+              }
+           }
+        };
     }
     rpc LoginUser (LoginUserRequest) returns (LoginUserResponse){
         option (google.api.http) = {
             post: "/v1/user_login",
             body:"*"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+          description: "login user api Function";
+          summary: "API for user login aplicationr";
+          responses: {
+            key: "0"
+            value: {
+              examples: {
+                key: "application/json"
+                value: "{\"value\": \"the input value\"}"
+              }
+            }
+         }
+      };
     }
 }

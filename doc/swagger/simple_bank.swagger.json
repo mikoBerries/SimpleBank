@@ -23,8 +23,19 @@
   "paths": {
     "/v1/create_user": {
       "post": {
+        "summary": "To Create new User",
+        "description": "Create user api Function",
         "operationId": "simplebank_CreateUser",
         "responses": {
+          "0": {
+            "description": "",
+            "schema": {},
+            "examples": {
+              "application/json": {
+                "value": "the input value"
+              }
+            }
+          },
           "200": {
             "description": "A successful response.",
             "schema": {
@@ -55,8 +66,19 @@
     },
     "/v1/user_login": {
       "post": {
+        "summary": "API for user login aplicationr",
+        "description": "login user api Function",
         "operationId": "simplebank_LoginUser",
         "responses": {
+          "0": {
+            "description": "",
+            "schema": {},
+            "examples": {
+              "application/json": {
+                "value": "the input value"
+              }
+            }
+          },
           "200": {
             "description": "A successful response.",
             "schema": {

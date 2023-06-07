@@ -9,15 +9,17 @@ import (
 
 	"github.com/MikoBerries/SimpleBank/api"
 	db "github.com/MikoBerries/SimpleBank/db/sqlc"
+	_ "github.com/MikoBerries/SimpleBank/doc/statik"
 	"github.com/MikoBerries/SimpleBank/gapi"
 	"github.com/MikoBerries/SimpleBank/pb"
 	"github.com/MikoBerries/SimpleBank/util"
+
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	_ "github.com/lib/pq"
+	"github.com/rakyll/statik/fs"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/protobuf/encoding/protojson"
-
-	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -77,8 +79,13 @@ func runHTTPServer(cf util.Config, store db.Store) {
 	//handle all path
 	mux.Handle("/", grpcMux)
 
-	fl := http.FileServer(http.Dir("./doc/swagger"))
-	mux.Handle("/swagger/", http.StripPrefix("/swagger/", fl))
+	//make swagger ui statik file
+	statikFile, err := fs.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+	swaggerHandler := http.StripPrefix("/swagger/", http.FileServer(statikFile))
+	mux.Handle("/swagger/", swaggerHandler)
 
 	//lsitener to listen Tcp in 8080 port
 	listener, err := net.Listen("tcp", cf.HttpServerAddress)

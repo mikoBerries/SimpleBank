@@ -224,7 +224,14 @@ ATDD in short explanation:
         - Google credentials should only be used to connect to Google services. Sending a Google issued OAuth2 token to a non-Google service could result in this token being stolen and used to impersonate the client to Google services.
     - https://grpc.io/docs/guides/auth/
 
-8. Redis
+9. Swagger-ui
+    - Swagger UI allows anyone — be it your development team or your end consumers — to visualize and interact with the API’s resources without having any of the implementation logic in place. It’s automatically generated from your OpenAPI (formerly known as Swagger) Specification, with the visual documentation making it easy for back end implementation and client side consumption.
+    - using it in our local server with just adding swagger-ui/dist to our project and serve it as fileserver
+    - https://github.com/swagger-api/swagger-ui
+    - using rakyll/statik to allows you to embed a directory of static files into your Go binary (it' wil faster since it's no need to read file when called)
+    - https://github.com/rakyll/statik
+
+9. Redis
     - Best practices https://climbtheladder.com/10-redis-key-best-practices/
 ## ETC
 ------ 
