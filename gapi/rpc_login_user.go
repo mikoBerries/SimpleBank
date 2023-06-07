@@ -46,13 +46,13 @@ func (server *server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to convert uuid")
 	}
-
+	mtaData := server.extractMetadata(ctx)
 	arg := db.CreateSessionParams{
 		ID:           uuid,
 		Username:     user.Username,
 		RefreshToken: refreshToken,
-		UserAgent:    "",
-		ClientIp:     "",
+		UserAgent:    mtaData.UserAgent,
+		ClientIp:     mtaData.ClientIP,
 		IsBlocked:    false,
 		ExpiresAt:    refeshTokenPayload.ExpiresAt.Time,
 	}
