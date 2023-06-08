@@ -29,6 +29,21 @@ mock:
 dockerBuild :
 	docker build -t simplebank:lastest .
 
+protoc:
+	rm -f pb/*.go
+	rm -f doc/swagger/*.json
+	protoc --proto_path=proto \
+	--go_out=pb --go_opt=paths=source_relative \
+	--go-grpc_out=pb --go-grpc_opt=paths=source_relative \
+	--grpc-gateway_out pb --grpc-gateway_opt paths=source_relative \
+	--openapiv2_out=doc/swagger --openapiv2_opt=allow_merge=true,merge_file_name=simple_bank \
+	proto/*.proto 
+	statik -src=./doc/swagger -dest=./doc
+
+evans:
+	evans --host localhost -p 9090 -r repl
+
+
 test:
 	go test -v -cover ./...
 cleantest:
@@ -36,4 +51,4 @@ cleantest:
 server:
 	go run main.go
 
-PHONY: postgres createdb dropdb migrateup migratedown test cleantest server mock migrateup1 migratedown1 dockerBuild sb dbdocs dbml2sql
+PHONY: postgres createdb dropdb migrateup migratedown test cleantest server mock migrateup1 migratedown1 dockerBuild sb dbdocs dbml2sql proto

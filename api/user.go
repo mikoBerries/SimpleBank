@@ -86,7 +86,7 @@ type loginUserRequest struct {
 type loginUserResponse struct {
 	SessionId             uuid.UUID    `json:"session_id"`
 	AccessToken           string       `json:"acc_token"`
-	AccesTokenExpiresAt   time.Time    `json:"access_token_expires_at"`
+	AccessTokenExpiresAt  time.Time    `json:"access_token_expires_at"`
 	RefreshToken          string       `json:"refresh_token"`
 	RefreshTokenExpiresAt time.Time    `json:"refresh_token_expires_at"`
 	User                  userResponse `json:"user"`
@@ -153,7 +153,7 @@ func (server *server) userLogin(ctx *gin.Context) {
 	rsp := loginUserResponse{
 		SessionId:             resultSession.ID,
 		AccessToken:           accessToken,
-		AccesTokenExpiresAt:   accessTokenPayload.ExpiresAt.Time,
+		AccessTokenExpiresAt:  accessTokenPayload.ExpiresAt.Time,
 		RefreshToken:          refreshToken,
 		RefreshTokenExpiresAt: refeshTokenPayload.ExpiresAt.Time,
 		User:                  newUserResponse(user),

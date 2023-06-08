@@ -13,37 +13,37 @@ $ go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@$
 ```
 
 2. migration in sqlc
-- sqlc does not perform database migrations for you. However, sqlc is able to differentiate between up and down migrations. sqlc ignores down migrations when parsing SQL files.
+    - sqlc does not perform database migrations for you. However, sqlc is able to differentiate between up and down migrations. sqlc ignores down migrations when parsing SQL files.
 
-- sqlc supports parsing migrations from the following tools:
-    - dbmate
-    - golang-migrate
-    - goose
-    - sql-migrate
-    - tern
+    - sqlc supports parsing migrations from the following tools:
+        - dbmate
+        - golang-migrate
+        - goose
+        - sql-migrate
+        - tern
 
 3. comparing database/sql package, gorm, sqlx, and sqlc
-- article 
-    https://blog.jetbrains.com/go/2023/04/27/comparing-db-packages/
-    https://gorm.io/docs/query.html
+    - article 
+        - https://blog.jetbrains.com/go/2023/04/27/comparing-db-packages/
+        - https://gorm.io/docs/query.html
 
-- sqlc.yaml config
-    https://docs.sqlc.dev/en/latest/reference/config.html#gen
+    - sqlc.yaml config
+        - https://docs.sqlc.dev/en/latest/reference/config.html#gen
 
 4. Transaction 
-- A transaction is a single logical unit of work that accesses and possibly modifies the contents of a database. Transactions access data using read and write operations. 
-- In order to maintain consistency in a database, before and after the transaction, certain properties are followed. These are called ACID properties.
+    - A transaction is a single logical unit of work that accesses and possibly modifies the contents of a database. Transactions access data using read and write operations. 
+    - In order to maintain consistency in a database, before and after the transaction, certain properties are followed. These are called ACID properties.
 
 https://www.geeksforgeeks.org/acid-properties-in-dbms/
 
 5. sql anomaly 
-- dirty read
-- lost update
-- non-repeatable read
-- phantoms
-- serialization anomaly
-    - https://mkdev.me/posts/transaction-isolation-levels-with-postgresql-as-an-example
-    - https://www.postgresql.org/docs/current/explicit-locking.html
+    - dirty read
+    - lost update
+    - non-repeatable read
+    - phantoms
+    - serialization anomaly
+    https://mkdev.me/posts/transaction-isolation-levels-with-postgresql-as-an-example
+    https://www.postgresql.org/docs/current/explicit-locking.html
 
 6. Deadlock in database
 
@@ -65,12 +65,11 @@ https://www.geeksforgeeks.org/acid-properties-in-dbms/
     https://github.com/gin-gonic/examples
 
 2. Viper
-    Viper lib For Easy configuration File management tools
-    https://github.com/spf13/vigo-per
+    - Viper lib For Easy configuration File management tools (https://github.com/spf13/vigo-per)
 
 3. Mock Testing
-    Mock testing are using "White Box" testing techniques, used to testing every functional func in code.
-    https://github.com/golang/mock
+    - Mock testing are using "White Box" testing techniques, used to testing every functional func in code. (https://github.com/golang/mock)
+    - Stub is replacement for some dependency in your code that will be used during test execution. It is typically built for one particular test and unlikely can be reused for another because it has hardcoded expectations and assumptions.
 
 4. Testing Method  TDD / BDD / ATDD
 * TDD (test-driven development) approach with step:
@@ -100,8 +99,8 @@ https://www.geeksforgeeks.org/acid-properties-in-dbms/
 ATDD in short explanation:
     - BDD are still very similar to BDD testing techniques but focusing in More detailed an precise requirements at development feature.
 
-https://www.techtarget.com/searchsoftwarequality/definition/test-driven-development
-https://www.browserstack.com/guide/tdd-vs-bdd-vs-atdd
+- https://www.techtarget.com/searchsoftwarequality/definition/test-driven-development
+- https://www.browserstack.com/guide/tdd-vs-bdd-vs-atdd
 
 5. PASETO
 - paseto lib
@@ -115,7 +114,7 @@ https://www.browserstack.com/guide/tdd-vs-bdd-vs-atdd
 
 ## Section Deploying aplication
 -------------------------------
-1. Docker iamges tag :
+1. Docker images tag (alpine / bullseye / buster / windowsservercore / nanoserver):
 - https://medium.com/swlh/alpine-slim-stretch-buster-jessie-bullseye-bookworm-what-are-the-differences-in-docker-62171ed4531d
 2. Docker build Documentation:
 - https://docs.docker.com/engine/reference/commandline/build/
@@ -130,7 +129,7 @@ https://www.browserstack.com/guide/tdd-vs-bdd-vs-atdd
 ## Section Session & GRPC
 1. Session token and Access Token
     - Refresh tokens provide a way to bypass the temporary nature of access tokens. Normally, a user with an access token can only access protected resources or perform specific actions for a set period of time, which reduces the risk of the token being compromised. A refresh token allows the user to get a new access token without needing to log in again.
-    - Refresh Token best practice :https://stateful.com/blog/refresh-tokens-security 
+    - Refresh Token best practice : https://stateful.com/blog/refresh-tokens-security 
 
 2. DbDocs.io 
     - Make sure NodeJS and NPM have been installed on your computer before the installation.
@@ -149,7 +148,6 @@ https://www.browserstack.com/guide/tdd-vs-bdd-vs-atdd
     - Convert a DBML file to SQL
     ```console
     $ npm install -g @dbml/cli
-    
     $ dbml2sql schema.dbml --postgres -o schema.sql
     $ dbml2sql <path-to-dbml-file>
            [--mysql|--postgres|--mssql]
@@ -166,16 +164,106 @@ https://www.browserstack.com/guide/tdd-vs-bdd-vs-atdd
     ```
     - DBML CLI make dbml-error.log file as error output even it's nothings wrong.
 
-3. GRPC VS REST api
-    - https://blog.dreamfactory.com/grpc-vs-rest-how-does-grpc-compare-with-traditional-rest-apis/#:~:text=Here%20are%20the%20main%20differences,usually%20leverages%20JSON%20or%20XML.
-    - https://learning.postman.com/docs/sending-requests/grpc/first-grpc-request/
-4. Redis
+3. RPC Remote Procedure Call
+    - https://medium.com/programmer-geek/mengenal-rpc-remote-procedure-call-7d8a794bbd1f
+    - https://www.techtarget.com/searchapparchitecture/definition/Remote-Procedure-Call-RPC
+    - Few list of RPC framework:
+        1. gRPC: gRPC is a high-performance, open-source RPC framework that uses HTTP/2 as the transport layer and Protocol Buffers as the serialization format.
+        2. Apache Thrift: Apache Thrift is another popular RPC framework that is available for a variety of languages.
+        3. ZeroMQ: ZeroMQ is a lightweight, asynchronous RPC framework that is often used in distributed systems and microservices architectures.
+        4. RabbitMQ: RabbitMQ is a popular message broker that can be used to implement RPC. 
+        5. Amazon Web Services (AWS) Lambda: AWS Lambda is a serverless computing platform that can be used to implement RPC. 
+
+4. GRPC / Google RPC Framework
+    - using GRPC ProtoBuff tolls can server Both GRPC and HTTP request
+    - 4 types of gRPC
+        1. Unary. (1 : 1)
+        2. Server Streaming. (1 : many)
+        3. Client Streaming. (many : 1)
+        4. Bi-directional streaming. (many : many)
+    - website https://grpc.io/
+
+5. Protocol Buffer (https://protobuf.dev/programming-guides/proto3/) V3
+    - protocol buffer instalation (https://grpc.io/docs/protoc-installation/) windows user using Install pre-compiled binaries (https://github.com/google/protobuf/releases)
+    - for golang Install the protocol compiler plugins for Go using the following commands:
+    ```console
+    $ go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
+    $ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
+    ```
+    - Protobuff extendsion vs code : https://marketplace.visualstudio.com/items?itemName=zxh404.vscode-proto3&ssr=false#overview
+    - Generate protobuf from .proto to .go file
+    ```console
+    $ protoc --go_out=. --go_opt=paths=source_relative \
+    --go-grpc_out=. --go-grpc_opt=paths=source_relative \
+    helloworld/helloworld.proto
+    ```
+    - Protobuf support scalar type and explanation (https://protobuf.dev/programming-guides/proto3/#scalar)
+    - Protoc can produce open api documentation
+    ```console
+    --openapiv2_out=doc/swagger
+    ```
+    - Some option we can use for protoc generation write inside protobuffer services. >>>>> Do not Forget to copy .proto file to project path as import depedency
+        - https://github.com/grpc-ecosystem/grpc-gateway/blob/main/examples/internal/proto/examplepb/a_bit_of_everything.proto
+6. GRPC tools to testing
+    - evans : https://github.com/ktr0731/evans
+    ```console
+    evans --host localhost -p 9090 -r repl
+    ```
+    - Postman also support gRPC too.
+    - To use Service definition using server reflection, gRPC server mus registeret to pakcage reflection
+        - reflection.Register(grpcServer)
+7. gRPC gateway
+    - gRPC-Gateway is a plugin of protoc. It reads a gRPC service definition and generates a reverse-proxy server which translates a RESTful JSON API into gRPC.
+    - This project aims to provide that HTTP+JSON interface to your gRPC service because, you might still want to provide a traditional RESTful JSON API as well. Reasons can range from maintaining backward-compatibility, supporting languages or clients that are not well supported by gRPC
+    - Source code : https://github.com/grpc-ecosystem/grpc-gateway
+
+8. gRPC request validator
+    - in gin using binding/v10
+    - when making error validtaion best practice to write field same as request param name (ex : full_name) to create consistency.
+
+8. Authentication in GRPC
+    - SSL/TLS: gRPC has SSL/TLS integration and promotes the use of SSL/TLS to authenticate the server.
+    - ALTS: gRPC supports ALTS as a transport security mechanism.
+    - Token-based authentication with Google : gRPC provides a generic mechanism to attach metadata based credentials to requests and responses.
+        - Google credentials should only be used to connect to Google services. Sending a Google issued OAuth2 token to a non-Google service could result in this token being stolen and used to impersonate the client to Google services.
+    - https://grpc.io/docs/guides/auth/
+
+9. Swagger-ui
+    - Swagger UI allows anyone — be it your development team or your end consumers — to visualize and interact with the API’s resources without having any of the implementation logic in place. It’s automatically generated from your OpenAPI (formerly known as Swagger) Specification, with the visual documentation making it easy for back end implementation and client side consumption.
+    - using it in our local server with just adding swagger-ui/dist to our project and serve it as fileserver
+    - https://github.com/swagger-api/swagger-ui
+    - using rakyll/statik to allows you to embed a directory of static files into your Go binary (it' wil faster since it's no need to read file when called)
+    - https://github.com/rakyll/statik
+
+9. Redis
     - Best practices https://climbtheladder.com/10-redis-key-best-practices/
 ## ETC
 ------ 
-* explanation of "var _ Interface = (*Type)(nil)"
-    https://github.com/uber-go/guide/issues/25
-* .yaml 
-    https://learnxinyminutes.com/docs/yaml/
-* Bash
-    https://learnxinyminutes.com/docs/bash/
+1. explanation of "var _ Interface = (*Type)(nil)"
+    - https://github.com/uber-go/guide/issues/25
+2. .yaml 
+    - https://learnxinyminutes.com/docs/yaml/
+3. Bash
+    - https://learnxinyminutes.com/docs/bash/
+4. Some API management tools that support gRPC testing include Postman, Insomnia, Kreya. app, and BloomRPC
+5. iana standart HTTP/2 response code
+    - https://www.iana.org/assignments/http2-parameters/http2-parameters.xhtml
+6. GRPC Status code (1 - 16) and some case code will procude:
+    - https://grpc.github.io/grpc/core/md_doc_statuscodes.html
+7. GRPC vs WebSocket
+    - https://www.wallarm.com/what/grpc-vs-websocket-when-is-it-better-to-use
+8. GRPC VS REST api
+    - https://blog.dreamfactory.com/grpc-vs-rest-how-does-grpc-compare-with-traditional-rest-apis/#:~:text=Here%20are%20the%20main%20differences,usually%20leverages%20JSON%20or%20XML.
+    - https://learning.postman.com/docs/sending-requests/grpc/first-grpc-request/
+9. MQTT
+    - https://aws.amazon.com/what-is/mqtt/
+10. Networking Technique Multiplexing (Multiplexers and de-Multiplexers)
+    - https://www.tutorialspoint.com/data_communication_computer_network/physical_layer_multiplexing.htm
+11. Serialization data
+    - https://hazelcast.com/glossary/serialization/
+12. Anatomy of API (Application Programming Interface)
+    - https://www.mertech.com/blog/the-anatomy-of-a-web-api
+13. Phyton Framework Django vs Flask
+    - https://www.interviewbit.com/blog/flask-vs-django/
+14. Swagger hub to populate api documentation (exmaple file in doc/swagger/*.json)
+    - https://swagger.io/tools/swaggerhub/
