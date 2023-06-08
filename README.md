@@ -277,3 +277,5 @@ ATDD in short explanation:
 16. REST API requests POST, GET, DELETE,  PUT / PATCH ?
      - https://www.abstractapi.com/guides/put-vs-patch#:~:text=PUT%20and%20PATCH%20both%20perform,entire%20body%20in%20the%20request.
      - PUT modifies a record's information and creates a new record if one is not available, and PATCH updates a resource without sending the entire body in the request.
+17. Postman for testing Support http, gRPC, documenting, easy value set, etc
+    - https://learning.postman.com/docs/sending-requests/variables/

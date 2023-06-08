@@ -17,10 +17,20 @@ import (
 
 // UpdateUser to create new username and serving for gRPC server
 func (server *server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
+	//checking header token auth (Paseto v2)
+	authPayload, err := server.authorizeUser(ctx)
+	if err != nil {
+		return nil, unauthenticatedError(err)
+	}
+
 	//Check all violations happend on this request
 	violations := validateUpdateUserReqeust(req)
 	if violations != nil {
 		return nil, invalidArgumentError(violations)
+	}
+
+	if authPayload.UserName != req.Username {
+		return nil, status.Errorf(codes.PermissionDenied, "cannot update other user's info")
 	}
 
 	arg := db.UpdateUserParams{
