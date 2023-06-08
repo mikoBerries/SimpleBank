@@ -7,7 +7,9 @@ import (
 	db "github.com/MikoBerries/SimpleBank/db/sqlc"
 	"github.com/MikoBerries/SimpleBank/pb"
 	"github.com/MikoBerries/SimpleBank/util"
+	"github.com/MikoBerries/SimpleBank/val"
 	"github.com/gofrs/uuid"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -15,6 +17,10 @@ import (
 
 // LoginUser serve GRPC func for login user rpc
 func (server *server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (*pb.LoginUserResponse, error) {
+	violations := validateUserLoginReqeust(req)
+	if violations != nil {
+		return nil, invalidArgumentError(violations)
+	}
 
 	user, err := server.store.GetUser(ctx, req.GetUsername())
 	if err != nil {
@@ -72,4 +78,17 @@ func (server *server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (
 	}
 
 	return rsp, nil
+}
+
+// validateUserLoginReqeust return all violation (code: BadReqeust) happended at create function reqeust
+func validateUserLoginReqeust(req *pb.LoginUserRequest) (violations []*errdetails.BadRequest_FieldViolation) {
+	//check everything nedeed
+	if err := val.ValidateUsername(req.GetUsername()); err != nil {
+		violations = append(violations, fieldViolation("username", err))
+	}
+
+	if err := val.ValidatePassword(req.GetPassword()); err != nil {
+		violations = append(violations, fieldViolation("password", err))
+	}
+	return
 }

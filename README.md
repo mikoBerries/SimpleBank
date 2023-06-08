@@ -217,6 +217,10 @@ ATDD in short explanation:
     - This project aims to provide that HTTP+JSON interface to your gRPC service because, you might still want to provide a traditional RESTful JSON API as well. Reasons can range from maintaining backward-compatibility, supporting languages or clients that are not well supported by gRPC
     - Source code : https://github.com/grpc-ecosystem/grpc-gateway
 
+8. gRPC request validator
+    - in gin using binding/v10
+    - when making error validtaion best practice to write field same as request param name (ex : full_name) to create consistency.
+
 8. Authentication in GRPC
     - SSL/TLS: gRPC has SSL/TLS integration and promotes the use of SSL/TLS to authenticate the server.
     - ALTS: gRPC supports ALTS as a transport security mechanism.
