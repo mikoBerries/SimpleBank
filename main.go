@@ -3,11 +3,13 @@ package main
 import (
 	"context"
 	"database/sql"
-	"log"
+
 	"net"
 	"net/http"
+	"os"
 
 	_ "github.com/lib/pq"
+	"github.com/rs/zerolog"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -23,6 +25,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rakyll/statik/fs"
 
+	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -32,12 +35,15 @@ func main() {
 	//load config file using viper
 	cf, err := util.LoadConfig(".")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Msgf(err.Error())
+	}
+	if cf.Enviroment != "Production" {
+		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	}
 	//db connection
 	coon, err := sql.Open(cf.DBDriver, cf.DBSource)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Msg(err.Error())
 	}
 	//migrate database schema
 	migrateDatabase(cf.DBMigratePath, cf.DBSource)
@@ -58,7 +64,7 @@ func main() {
 func runHTTPServer(cf util.Config, store db.Store) {
 	server, err := gapi.NewServer(cf, store)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Msgf("err: %s", err)
 	}
 	ctx := context.Background()
 	//embed context with cancel
@@ -71,7 +77,7 @@ func runHTTPServer(cf util.Config, store db.Store) {
 			UseProtoNames: true, // use callback name from .proto file
 		},
 		UnmarshalOptions: protojson.UnmarshalOptions{
-			DiscardUnknown: true, //discard eveeything unknow field
+			DiscardUnknown: true, //discard every unknow field that not mapped
 		},
 	})
 
@@ -81,7 +87,7 @@ func runHTTPServer(cf util.Config, store db.Store) {
 	//register handler path from gAPI to grpc mux
 	err = pb.RegisterSimplebankHandlerServer(ctx, grpcMux, server)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Msgf(err.Error())
 	}
 
 	mux := http.NewServeMux()
@@ -91,7 +97,7 @@ func runHTTPServer(cf util.Config, store db.Store) {
 	//make swagger ui statik file
 	statikFile, err := fs.New()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Msgf("err:%s", err.Error())
 	}
 	swaggerHandler := http.StripPrefix("/swagger/", http.FileServer(statikFile))
 	mux.Handle("/swagger/", swaggerHandler)
@@ -99,12 +105,15 @@ func runHTTPServer(cf util.Config, store db.Store) {
 	//lsitener to listen Tcp in 8080 port
 	listener, err := net.Listen("tcp", cf.HttpServerAddress)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Msgf(err.Error())
 	}
+
 	log.Printf("Starting HTTP Proxy server at %s", listener.Addr().String())
-	err = http.Serve(listener, mux)
+	//Ember logger fot http request
+	handler := gapi.HttpLogger(mux)
+	err = http.Serve(listener, handler)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Msgf(err.Error())
 	}
 }
 
@@ -112,10 +121,12 @@ func runGRPCServer(cf util.Config, store db.Store) {
 	//Make go server
 	server, err := gapi.NewServer(cf, store)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Msgf(err.Error())
 	}
+	//logging for unary traffic
+	opt := grpc.UnaryInterceptor(gapi.GRPCLogger)
 	//make new GRPC server
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(opt)
 
 	//Register Proto Buffer to new grpc server
 	pb.RegisterSimplebankServer(grpcServer, server)
@@ -125,12 +136,12 @@ func runGRPCServer(cf util.Config, store db.Store) {
 	//listen tcp proctol in 0.0.0.0:9090 port
 	listener, err := net.Listen("tcp", cf.GRPCServerAddress)
 	if err != nil {
-		log.Fatal("error when setting gRPC server : ", err)
+		log.Fatal().Msgf("error when setting gRPC server : %s", err.Error())
 	}
 	log.Printf("Starting gRPC server at %s", listener.Addr().String())
 	err = grpcServer.Serve(listener)
 	if err != nil {
-		log.Fatal("error when start gRPC server : ", err)
+		log.Fatal().Msgf("error when start gRPC server : %s", err.Error())
 	}
 }
 
@@ -138,7 +149,7 @@ func runGRPCServer(cf util.Config, store db.Store) {
 func runGinServer(cf util.Config, store db.Store) {
 	srv, err := api.NewServer(cf, store)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Msgf("err:%s", err.Error())
 	}
 	// servErr := make(chan os.Signal)
 	err = srv.StartServerAddress(cf.HttpServerAddress)
@@ -170,22 +181,22 @@ func runGinServer(cf util.Config, store db.Store) {
 	// if err := srv.Shutdown(ctx); err != nil {
 	// }
 
-	log.Fatal("Server forced to shutdown:", err)
-	log.Println("Server exiting")
+	log.Fatal().Msgf("Server forced to shutdown:%s", err.Error())
+	log.Print("Server exiting")
 }
 
 // MigrateDatabase to execute mirgate database before server starting
 func migrateDatabase(migratePath string, DBSource string) {
-	log.Println("Start migrate database migrate")
+	log.Print("Start migrate database migrate")
 
 	migration, err := migrate.New(migratePath, DBSource)
 	if err != nil {
-		log.Fatal("error when setting migrate :", err)
+		log.Fatal().Msgf("error when setting migrate :%s", err.Error())
 	}
 	//even with migrate run well will returning err no change
 	if err = migration.Up(); err != migrate.ErrNoChange {
-		log.Fatal("error when migrate database :", err)
+		log.Fatal().Msgf("error when migrate database :%s", err.Error())
 	}
 
-	log.Println("Done migrate database migrate")
+	log.Print("Done migrate database migrate")
 }
