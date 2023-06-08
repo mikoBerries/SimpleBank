@@ -7,6 +7,12 @@ import (
 	"net"
 	"net/http"
 
+	_ "github.com/lib/pq"
+
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+
 	"github.com/MikoBerries/SimpleBank/api"
 	db "github.com/MikoBerries/SimpleBank/db/sqlc"
 	_ "github.com/MikoBerries/SimpleBank/doc/statik"
@@ -15,8 +21,8 @@ import (
 	"github.com/MikoBerries/SimpleBank/util"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	_ "github.com/lib/pq"
 	"github.com/rakyll/statik/fs"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -33,6 +39,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	//migrate database schema
+	migrateDatabase(cf.DBMigratePath, cf.DBSource)
+
 	//NewStore new struct of db conn and embbed querries
 	store := db.NewStore(coon)
 
@@ -163,4 +172,20 @@ func runGinServer(cf util.Config, store db.Store) {
 
 	log.Fatal("Server forced to shutdown:", err)
 	log.Println("Server exiting")
+}
+
+// MigrateDatabase to execute mirgate database before server starting
+func migrateDatabase(migratePath string, DBSource string) {
+	log.Println("Start migrate database migrate")
+
+	migration, err := migrate.New(migratePath, DBSource)
+	if err != nil {
+		log.Fatal("error when setting migrate :", err)
+	}
+	//even with migrate run well will returning err no change
+	if err = migration.Up(); err != migrate.ErrNoChange {
+		log.Fatal("error when migrate database :", err)
+	}
+
+	log.Println("Done migrate database migrate")
 }
