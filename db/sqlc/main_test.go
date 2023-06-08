@@ -10,8 +10,8 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var TestQueries *Queries
-var TestConn *sql.DB
+var testQueries *Queries
+var testConn *sql.DB
 
 func TestMain(m *testing.M) {
 	var err error
@@ -21,12 +21,12 @@ func TestMain(m *testing.M) {
 		log.Panic(err)
 	}
 
-	TestConn, err = sql.Open(cf.DBDriver, cf.DBSource)
+	testConn, err = sql.Open(cf.DBDriver, cf.DBSource)
 	if err != nil {
 		log.Fatal("cannot connect to db %w", err)
 	}
 
-	TestQueries = New(TestConn)
+	testQueries = New(testConn)
 
 	os.Exit(m.Run())
 }

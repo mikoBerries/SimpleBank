@@ -7,9 +7,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-//TestTransferTx Testing transfer transaction
+// TestTransferTx Testing transfer transaction
 func TestTransferTx(t *testing.T) {
-	store := NewStore(TestConn)
+	store := NewStore(testConn)
 	account1 := createRandomAccount(t)
 	account2 := createRandomAccount(t)
 
@@ -119,9 +119,9 @@ func TestTransferTx(t *testing.T) {
 
 }
 
-//TestTransferTxDeadlock for testing deadlock in database
+// TestTransferTxDeadlock for testing deadlock in database
 func TestTransferTxDeadlock(t *testing.T) {
-	store := NewStore(TestConn)
+	store := NewStore(testConn)
 
 	account1 := createRandomAccount(t)
 	account2 := createRandomAccount(t)
