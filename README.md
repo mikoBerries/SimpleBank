@@ -218,7 +218,7 @@ ATDD in short explanation:
     - Source code : https://github.com/grpc-ecosystem/grpc-gateway
 
 8. gRPC request validator
-    - in gin using binding/v10
+    - in gin using binding/v10 in gRPC using "google.golang.org/genproto/googleapis/rpc/errdetails"
     - when making error validtaion best practice to write field same as request param name (ex : full_name) to create consistency.
 
 8. Authentication in GRPC
@@ -227,8 +227,14 @@ ATDD in short explanation:
     - Token-based authentication with Google : gRPC provides a generic mechanism to attach metadata based credentials to requests and responses.
         - Google credentials should only be used to connect to Google services. Sending a Google issued OAuth2 token to a non-Google service could result in this token being stolen and used to impersonate the client to Google services.
     - https://grpc.io/docs/guides/auth/
+9. Logger framework for go
+    - 2 good logger zap & zero log
+    - https://blog.logrocket.com/5-structured-logging-packages-for-go/
+    - https://github.com/rs/zerolog
+    - Producing json log can help log management tolls to consume organize it.
+    - https://sematext.com/blog/best-log-management-tools/
 
-9. Swagger-ui
+10. Swagger-ui
     - Swagger UI allows anyone — be it your development team or your end consumers — to visualize and interact with the API’s resources without having any of the implementation logic in place. It’s automatically generated from your OpenAPI (formerly known as Swagger) Specification, with the visual documentation making it easy for back end implementation and client side consumption.
     - using it in our local server with just adding swagger-ui/dist to our project and serve it as fileserver
     - https://github.com/swagger-api/swagger-ui
