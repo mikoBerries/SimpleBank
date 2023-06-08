@@ -77,7 +77,7 @@ func runHTTPServer(cf util.Config, store db.Store) {
 			UseProtoNames: true, // use callback name from .proto file
 		},
 		UnmarshalOptions: protojson.UnmarshalOptions{
-			DiscardUnknown: true, //discard eveeything unknow field
+			DiscardUnknown: true, //discard every unknow field that not mapped
 		},
 	})
 
@@ -97,7 +97,7 @@ func runHTTPServer(cf util.Config, store db.Store) {
 	//make swagger ui statik file
 	statikFile, err := fs.New()
 	if err != nil {
-		log.Fatal().Msgf("err:", err)
+		log.Fatal().Msgf("err:%s", err.Error())
 	}
 	swaggerHandler := http.StripPrefix("/swagger/", http.FileServer(statikFile))
 	mux.Handle("/swagger/", swaggerHandler)
@@ -107,8 +107,11 @@ func runHTTPServer(cf util.Config, store db.Store) {
 	if err != nil {
 		log.Fatal().Msgf(err.Error())
 	}
+
 	log.Printf("Starting HTTP Proxy server at %s", listener.Addr().String())
-	err = http.Serve(listener, mux)
+	//Ember logger fot http request
+	handler := gapi.HttpLogger(mux)
+	err = http.Serve(listener, handler)
 	if err != nil {
 		log.Fatal().Msgf(err.Error())
 	}
