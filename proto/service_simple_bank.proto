@@ -5,6 +5,7 @@ package pb;
 import "google/api/annotations.proto";
 import "rpc_create_user.proto";
 import "rpc_login_user.proto";
+import "rpc_update_user.proto";
 
 import "protoc-gen-openapiv2/options/annotations.proto";
 
@@ -13,7 +14,7 @@ option go_package = "github.com/MikoBerries/SimpleBank/pb";
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) ={
   info: {
     title: "Simple Bank API",
-    version: "1.0",
+    version: "1.1",
     contact: {
       name: "Mikoberries",
       url: "https://github.com/mikoBerries",
@@ -43,6 +44,7 @@ service simplebank {
            }
         };
     }
+
     rpc LoginUser (LoginUserRequest) returns (LoginUserResponse){
         option (google.api.http) = {
             post: "/v1/user_login",
@@ -62,4 +64,25 @@ service simplebank {
          }
       };
     }
+    
+    rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse){
+      option (google.api.http) = {
+          patch: "/v1/update_user",
+          body:"*"
+      };
+      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        description: "update user api Function";
+        summary: "API for updating user data";
+        responses: {
+          key: "0"
+          value: {
+            examples: {
+              key: "application/json"
+              value: "{\"value\": \"the input value\"}"
+            }
+          }
+       }
+    };
+  }
+
 }

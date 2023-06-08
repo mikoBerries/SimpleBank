@@ -267,3 +267,13 @@ ATDD in short explanation:
     - https://www.interviewbit.com/blog/flask-vs-django/
 14. Swagger hub to populate api documentation (exmaple file in doc/swagger/*.json)
     - https://swagger.io/tools/swaggerhub/
+15. 5 types of design patterns:
+    - Creational patterns are used to deal with creating objects.
+    - Structural patterns are used to build idiomatic structures.
+    - Behavioural patterns are used to manage mostly with algorithms.
+    - Concurrency patterns are used to manage the timing execution and order execution of applications that have more than one flow.
+        - https://blog.devgenius.io/5-useful-concurrency-patterns-in-golang-8dc90ad1ea61
+    - Microservice patterns are used to build microservice applications.
+16. REST API requests POST, GET, DELETE,  PUT / PATCH ?
+     - https://www.abstractapi.com/guides/put-vs-patch#:~:text=PUT%20and%20PATCH%20both%20perform,entire%20body%20in%20the%20request.
+     - PUT modifies a record's information and creates a new record if one is not available, and PATCH updates a resource without sending the entire body in the request.
