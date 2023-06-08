@@ -149,7 +149,7 @@ func runGRPCServer(cf util.Config, store db.Store) {
 func runGinServer(cf util.Config, store db.Store) {
 	srv, err := api.NewServer(cf, store)
 	if err != nil {
-		log.Fatal().Msgf("err:", err)
+		log.Fatal().Msgf("err:%s", err.Error())
 	}
 	// servErr := make(chan os.Signal)
 	err = srv.StartServerAddress(cf.HttpServerAddress)
