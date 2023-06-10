@@ -27,20 +27,22 @@ type RedisTaskProcessor struct {
 
 // NewRedisTaskProcessor returning redis server processor
 func NewRedisTaskProcessor(redisOpt asynq.RedisClientOpt, store db.Store) TaskProcessor {
-
+	//create Task processor with cotum option
 	server := asynq.NewServer(
 		redisOpt,
 		asynq.Config{
-			//queues of priority higher faster
+			//queues of priority higher run first
 			Queues: map[string]int{
 				QueueCritical: 10,
 				QueueDefault:  5,
 			},
+			//overide eror handle func with our
 			ErrorHandler: asynq.ErrorHandlerFunc(func(ctx context.Context, task *asynq.Task, err error) {
 				log.Error().Err(err).Str("type", task.Type()).
 					Bytes("payload", task.Payload()).Msg("process task failed")
 			}),
-			// Logger: logger,
+			//set costume logger
+			Logger: NewLogger(),
 		},
 	)
 

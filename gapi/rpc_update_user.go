@@ -97,7 +97,7 @@ func validateUpdateUserReqeust(req *pb.UpdateUserRequest) (violations []*errdeta
 	}
 	//nothings to update
 	if !updateData {
-		violations = append(violations, fieldViolation("field", fmt.Errorf("Missing field to update")))
+		violations = append(violations, fieldViolation("field", fmt.Errorf("missing field to update")))
 	}
 	return
 }

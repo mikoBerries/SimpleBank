@@ -249,6 +249,7 @@ ATDD in short explanation:
     - Redis is an open source (BSD licensed), in-memory data structure store used as a database, cache, message broker, and streaming engine.
     - Redis Data type https://redis.io/docs/data-types/
     - Best practices https://climbtheladder.com/10-redis-key-best-practices/
+    - Always seting task with some delay so database state will be ready and redis task will satified.
 
 
 ## ETC
