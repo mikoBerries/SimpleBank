@@ -1,7 +1,9 @@
 DB_URL=postgresql://root:mysecretpassword@localhost:5432/simple_bank?sslmode=disable
 
-ostgres:
+postgres:
 	docker run --name postgres15 -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=mysecretpassword -d postgres
+redis:
+	docker run --name redis7 -p 6379:6379 -d redis:7.0-alpine --save 60 1 --loglevel warning
 sb:
 	docker run --name sb -p 8080:8080 simplebank:lastest
 simpleBankRelease:
@@ -51,4 +53,4 @@ cleantest:
 server:
 	go run main.go
 
-PHONY: postgres createdb dropdb migrateup migratedown test cleantest server mock migrateup1 migratedown1 dockerBuild sb dbdocs dbml2sql proto
+PHONY: postgres createdb dropdb migrateup migratedown test cleantest server mock migrateup1 migratedown1 dockerBuild sb dbdocs dbml2sql proto redis

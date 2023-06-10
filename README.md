@@ -241,8 +241,16 @@ ATDD in short explanation:
     - using rakyll/statik to allows you to embed a directory of static files into your Go binary (it' wil faster since it's no need to read file when called)
     - https://github.com/rakyll/statik
 
-9. Redis
+## Section Asynchronous processing with background workers
+---------------------------------------------------------- 
+1. asynq lib
+    - https://github.com/hibiken/asynq still in heavy develoment release version is not done yet but high star on github
+2. Redis
+    - Redis is an open source (BSD licensed), in-memory data structure store used as a database, cache, message broker, and streaming engine.
+    - Redis Data type https://redis.io/docs/data-types/
     - Best practices https://climbtheladder.com/10-redis-key-best-practices/
+
+
 ## ETC
 ------ 
 1. explanation of "var _ Interface = (*Type)(nil)"
@@ -285,3 +293,9 @@ ATDD in short explanation:
      - PUT modifies a record's information and creates a new record if one is not available, and PATCH updates a resource without sending the entire body in the request.
 17. Postman for testing Support http, gRPC, documenting, easy value set, etc
     - https://learning.postman.com/docs/sending-requests/variables/
+18. synchronous and asynchronous
+    - https://www.mendix.com/blog/asynchronous-vs-synchronous-programming/#:~:text=Asynchronous%20is%20a%20non%2Dblocking%20architecture%2C%20so%20the%20execution%20of,of%20the%20one%20before%20it.
+* Default port 
+    - postgre : 5432
+    - redis : 6379
+    - webapps : 8080
