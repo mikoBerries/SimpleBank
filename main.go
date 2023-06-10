@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/hibiken/asynq"
 	_ "github.com/lib/pq"
 	"github.com/rs/zerolog"
 
@@ -21,6 +22,7 @@ import (
 	"github.com/MikoBerries/SimpleBank/gapi"
 	"github.com/MikoBerries/SimpleBank/pb"
 	"github.com/MikoBerries/SimpleBank/util"
+	"github.com/MikoBerries/SimpleBank/worker"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rakyll/statik/fs"
@@ -54,15 +56,22 @@ func main() {
 	//uncomment this to use gin server
 	//runGRPCServer(cf,store)
 
+	redisOpt := asynq.RedisClientOpt{
+		Addr: cf.RedisServerAddress,
+	}
+	//run redis
+	runRedisTaskProcessor(cf, redisOpt, store)
 	//run HTPP proxy server
-	go runHTTPServer(cf, store)
+
+	taskDistirbutor := worker.NewRedisTaskDistributor(redisOpt)
+	go runHTTPServer(cf, store, taskDistirbutor)
 	//use GRPC server
-	runGRPCServer(cf, store)
+	runGRPCServer(cf, store, taskDistirbutor)
 }
 
 // runHTTPServer are gPRC Proxy server to serve Http json and forwading to gRPC server
-func runHTTPServer(cf util.Config, store db.Store) {
-	server, err := gapi.NewServer(cf, store)
+func runHTTPServer(cf util.Config, store db.Store, taskDistributor worker.TaskDistributor) {
+	server, err := gapi.NewServer(cf, store, taskDistributor)
 	if err != nil {
 		log.Fatal().Msgf("err: %s", err)
 	}
@@ -117,9 +126,9 @@ func runHTTPServer(cf util.Config, store db.Store) {
 	}
 }
 
-func runGRPCServer(cf util.Config, store db.Store) {
+func runGRPCServer(cf util.Config, store db.Store, taskDistributor worker.TaskDistributor) {
 	//Make go server
-	server, err := gapi.NewServer(cf, store)
+	server, err := gapi.NewServer(cf, store, taskDistributor)
 	if err != nil {
 		log.Fatal().Msgf(err.Error())
 	}
@@ -199,4 +208,16 @@ func migrateDatabase(migratePath string, DBSource string) {
 	}
 
 	log.Print("Done migrate database migrate")
+}
+
+// runRedisTaskProcessor to run processor worker
+func runRedisTaskProcessor(config util.Config, redisOpt asynq.RedisClientOpt, store db.Store) {
+	//get new worker server with given redis option and db connection
+	taskProcessor := worker.NewRedisTaskProcessor(redisOpt, store)
+	log.Info().Msg("start task processor")
+	//.start() to run redis server with given opt
+	err := taskProcessor.Start()
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed to start task processor")
+	}
 }

@@ -7,12 +7,16 @@ import (
 )
 
 type Config struct {
-	Enviroment          string        `mapstructure:"ENVIROMENT"`
-	DBDriver            string        `mapstructure:"DB_DRIVER"`
-	DBSource            string        `mapstructure:"DB_SOURCE"`
-	DBMigratePath       string        `mapstructure:"DB_MIGRATE_PATH"`
-	HttpServerAddress   string        `mapstructure:"HTTP_SERVER_ADDRESS"`
-	GRPCServerAddress   string        `mapstructure:"GRPC_SERVER_ADDRESS"`
+	Enviroment string `mapstructure:"ENVIROMENT"`
+
+	DBDriver      string `mapstructure:"DB_DRIVER"`
+	DBSource      string `mapstructure:"DB_SOURCE"`
+	DBMigratePath string `mapstructure:"DB_MIGRATE_PATH"`
+
+	HttpServerAddress  string `mapstructure:"HTTP_SERVER_ADDRESS"`
+	GRPCServerAddress  string `mapstructure:"GRPC_SERVER_ADDRESS"`
+	RedisServerAddress string `mapstructure:"REDIS_SERVER_ADDRESS"`
+
 	TokenSymmetricKey   string        `mapstructure:"TOKEN_SYMMETRIC_KEY"`
 	AccessTokenDuration time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`
 	RefeshTokenDuration time.Duration `mapstructure:"REFESH_TOKEN_DURATION"`

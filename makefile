@@ -3,7 +3,7 @@ DB_URL=postgresql://root:mysecretpassword@localhost:5432/simple_bank?sslmode=dis
 postgres:
 	docker run --name postgres15 -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=mysecretpassword -d postgres
 redis:
-	docker run --name redis7 -p 6379:6379 -d redis:7.0-alpine --save 60 1 --loglevel warning
+	docker run --name redis7 -p 0.0.0.:6379:0.0.0.:6379 -d redis:7.0-alpine --save 60 1 --loglevel warning
 sb:
 	docker run --name sb -p 8080:8080 simplebank:lastest
 simpleBankRelease:

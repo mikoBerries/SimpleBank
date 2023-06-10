@@ -29,12 +29,15 @@ func (redisDistributor *RedisTaskDistributor) DistributeTaskSendVerifyEmail(
 		return fmt.Errorf("failed to marshal task payload: %w", err)
 	}
 	// create new task structswith (task name, task payload, task option)
-	task := asynq.NewTask(TaskSendVerifyEmail, jsonPayload, opts...)
+	task := asynq.NewTask(TaskSendVerifyEmail, jsonPayload)
 	// signed task to redis queque
+
 	info, err := redisDistributor.client.EnqueueContext(ctx, task)
+	log.Info().Err(err)
 	if err != nil { //somethings happend when signed a task
 		return fmt.Errorf("failed to enqueue task: %w", err)
 	}
+
 	log.Info().Str("type", task.Type()).Bytes("payload", task.Payload()).
 		Str("queue", info.Queue).Int("max_retry", info.MaxRetry).Msg("enqueued task")
 	//done signed task to redis and ready to consume by processor task

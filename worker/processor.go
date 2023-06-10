@@ -14,7 +14,7 @@ const (
 	QueueDefault  = "default"
 )
 
-// TaskProcessor
+// TaskProcessor write your new task processor for each task func
 type TaskProcessor interface {
 	Start() error
 	ProcessTaskSendVerifyEmail(ctx context.Context, task *asynq.Task) error
@@ -31,6 +31,7 @@ func NewRedisTaskProcessor(redisOpt asynq.RedisClientOpt, store db.Store) TaskPr
 	server := asynq.NewServer(
 		redisOpt,
 		asynq.Config{
+			//queues of priority higher faster
 			Queues: map[string]int{
 				QueueCritical: 10,
 				QueueDefault:  5,
