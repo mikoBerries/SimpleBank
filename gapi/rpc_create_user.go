@@ -11,7 +11,6 @@ import (
 	"github.com/MikoBerries/SimpleBank/worker"
 	"github.com/hibiken/asynq"
 	"github.com/lib/pq"
-	"github.com/rs/zerolog/log"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -30,14 +29,32 @@ func (server *server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		return nil, status.Errorf(codes.Internal, "failed to hash password %s", err)
 	}
 
-	arg := db.CreateUserParams{
-		Username:       req.GetUsername(),
-		HashedPassword: saltedPassword,
-		FullName:       req.GetFullName(),
-		Email:          req.GetEmail(),
+	arg := db.CreataUserTxParams{
+		CreateUserParams: db.CreateUserParams{
+			Username:       req.GetUsername(),
+			HashedPassword: saltedPassword,
+			FullName:       req.GetFullName(),
+			Email:          req.GetEmail(),
+		},
+		//build stub for this create user process
+		AfterCreate: func(user db.User) error {
+			//prepare payload for redis
+			payload := &worker.PayloadSendVerifyEmail{Username: user.Username}
+			// set list of this task option
+			opts := []asynq.Option{
+				asynq.MaxRetry(10),
+				asynq.ProcessIn(2 * time.Second),
+				asynq.Queue(worker.QueueCritical),
+			}
+			// distribute task with payload and opts
+			err = server.taskDisributor.DistributeTaskSendVerifyEmail(ctx, payload, opts...)
+
+			// log.Info().Str("msg", "Task sended").Send()
+			return err
+		},
 	}
 
-	user, err := server.store.CreateUser(ctx, arg)
+	txUserResult, err := server.store.CreataUserTx(ctx, arg)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok { //if it is pq error
 			switch pqErr.Code.Name() {
@@ -47,22 +64,9 @@ func (server *server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		}
 		return nil, status.Errorf(codes.Internal, "failed to create user: %s", err)
 	}
-	//prepare payload for redis
-	payload := &worker.PayloadSendVerifyEmail{Username: user.Username}
-	// set list of this task option
-	opts := []asynq.Option{
-		asynq.MaxRetry(10),
-		asynq.ProcessIn(2 * time.Second),
-		asynq.Queue(worker.QueueCritical),
-	}
-	// distribute task with payload and opts
-	err = server.taskDisributor.DistributeTaskSendVerifyEmail(ctx, payload, opts)
-	if err != nil {
-		log.Info().Err(err).Send()
-	}
-	log.Info().Str("msg", "Task sended").Send()
+
 	rsp := &pb.CreateUserResponse{
-		User: convertUser(user),
+		User: convertUser(txUserResult.User),
 	}
 	return rsp, nil
 }
