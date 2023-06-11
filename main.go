@@ -20,6 +20,7 @@ import (
 	db "github.com/MikoBerries/SimpleBank/db/sqlc"
 	_ "github.com/MikoBerries/SimpleBank/doc/statik"
 	"github.com/MikoBerries/SimpleBank/gapi"
+	"github.com/MikoBerries/SimpleBank/mail"
 	"github.com/MikoBerries/SimpleBank/pb"
 	"github.com/MikoBerries/SimpleBank/util"
 	"github.com/MikoBerries/SimpleBank/worker"
@@ -212,10 +213,15 @@ func migrateDatabase(migratePath string, DBSource string) {
 
 // runRedisTaskProcessor to run processor worker
 func runRedisTaskProcessor(config util.Config, redisOpt asynq.RedisClientOpt, store db.Store) {
-	//get new worker server with given redis option and db connection
-	taskProcessor := worker.NewRedisTaskProcessor(redisOpt, store)
+	//setup mailer struct
+	mailer := mail.NewGmailSender(config.EmailSenderName, config.EmailSenderAddress, config.EmailSenderPassword)
+
+	//get new worker server with given redis option and db connection and mailer lib
+	taskProcessor := worker.NewRedisTaskProcessor(redisOpt, store, mailer)
+
 	log.Info().Msg("start task processor")
 	//.start() to run redis server with given opt
+
 	err := taskProcessor.Start()
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to start task processor")

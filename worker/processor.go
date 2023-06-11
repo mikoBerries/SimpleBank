@@ -4,6 +4,7 @@ import (
 	"context"
 
 	db "github.com/MikoBerries/SimpleBank/db/sqlc"
+	"github.com/MikoBerries/SimpleBank/mail"
 	"github.com/hibiken/asynq"
 	"github.com/rs/zerolog/log"
 )
@@ -21,12 +22,13 @@ type TaskProcessor interface {
 }
 
 type RedisTaskProcessor struct {
-	server *asynq.Server
-	store  db.Store
+	server *asynq.Server    //redis server
+	store  db.Store         //db conection
+	mailer mail.EmailSender //mail lib to send email
 }
 
 // NewRedisTaskProcessor returning redis server processor
-func NewRedisTaskProcessor(redisOpt asynq.RedisClientOpt, store db.Store) TaskProcessor {
+func NewRedisTaskProcessor(redisOpt asynq.RedisClientOpt, store db.Store, mailer mail.EmailSender) TaskProcessor {
 	//create Task processor with cotum option
 	server := asynq.NewServer(
 		redisOpt,
@@ -49,6 +51,7 @@ func NewRedisTaskProcessor(redisOpt asynq.RedisClientOpt, store db.Store) TaskPr
 	return &RedisTaskProcessor{
 		server: server,
 		store:  store,
+		mailer: mailer,
 	}
 }
 

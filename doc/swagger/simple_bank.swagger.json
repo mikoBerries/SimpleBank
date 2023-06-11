@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "Simple Bank API",
-    "version": "1.2",
+    "version": "1.1",
     "contact": {
       "name": "Mikoberries",
       "url": "https://github.com/mikoBerries",
@@ -149,6 +149,54 @@
           "simplebank"
         ]
       }
+    },
+    "/v1/verify_email": {
+      "get": {
+        "summary": "Verify Email",
+        "description": "verify email API used for created new user for validated uer email",
+        "operationId": "simplebank_VerifyEmail",
+        "responses": {
+          "0": {
+            "description": "",
+            "schema": {},
+            "examples": {
+              "application/json": {
+                "value": "the input value"
+              }
+            }
+          },
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbVerifyEmailResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "emailId",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "secretCode",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "simplebank"
+        ]
+      }
     }
   },
   "definitions": {
@@ -257,6 +305,14 @@
         "createAt": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "pbVerifyEmailResponse": {
+      "type": "object",
+      "properties": {
+        "isVerified": {
+          "type": "boolean"
         }
       }
     },

@@ -8,9 +8,10 @@ import (
 
 // Store interface for mock testing need
 type Store interface {
+	Querier
 	TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error)
 	CreataUserTx(ctx context.Context, arg CreataUserTxParams) (CreataUserTxResult, error)
-	Querier
+	VerifyEmailTx(ctx context.Context, arg VerifyEmailTxParams) (VerifyEmailTxResult, error)
 }
 
 // Store Embedding Queries and sq.DB

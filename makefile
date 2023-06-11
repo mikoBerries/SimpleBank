@@ -15,20 +15,21 @@ dropdb:
 	docker exec -it postgres15 dropdb simple_bank
 
 new_migration:
-	
+	migrate create -ext sql -dir db/migrations -seq $(name)
 migrateup:
 	migrate --path db/migrations -database "$(DB_URL)" -verbose up
 migratedown:
-	migrate --path db/migrations -database "$(DB_URL) -verbose down
+	migrate --path db/migrations -database "$(DB_URL)" -verbose down
 migrateup1:
-	migrate --path db/migrations -database "$(DB_URL) -verbose up 1
+	migrate --path db/migrations -database "$(DB_URL)" -verbose up 1
 migratedown1:
-	migrate --path db/migrations -database "$(DB_URL) -verbose down 1
+	migrate --path db/migrations -database "$(DB_URL)" -verbose down 1
 
 dbdocs:
 	dbdocs build doc/db.dbml
 dbml2sql:
 	dbml2sql doc/db.dbml --postgres -o doc/schema.sql
+
 mock:
 	mockgen -package mockdb -destination db/mock/store.go github.com/MikoBerries/SimpleBank/db/sqlc Store
 dockerBuild :
