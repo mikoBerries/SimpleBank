@@ -20,6 +20,10 @@ type Config struct {
 	TokenSymmetricKey   string        `mapstructure:"TOKEN_SYMMETRIC_KEY"`
 	AccessTokenDuration time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`
 	RefeshTokenDuration time.Duration `mapstructure:"REFESH_TOKEN_DURATION"`
+
+	EmailSenderName     string `mapstructure:"EMAIL_SENDER_NAME"`
+	EmailSenderAddress  string `mapstructure:"EMAIL_SENDER_ADDRESS"`
+	EmailSenderPassword string `mapstructure:"EMAIL_SENDER_PASSOWRD"`
 }
 
 // LoadConfig load configfile and returning config struct

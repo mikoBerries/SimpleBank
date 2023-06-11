@@ -250,7 +250,16 @@ ATDD in short explanation:
     - Redis Data type https://redis.io/docs/data-types/
     - Best practices https://climbtheladder.com/10-redis-key-best-practices/
     - Always seting task with some delay so database state will be ready and redis task will satified.
-
+    - To start redis in windows bash we must bring .conf file while starting redis-server.exe
+    ```console
+    $ redis-server.exe ~/path/to/redis/redis.windows.conf
+    ```
+3. Simple Mail Transfer Protocol (SMTP)
+    - standart liblary from go :https://pkg.go.dev/net/smtp (The smtp package is frozen and is not accepting new features. Some external packages provide more functionality.)
+    - lib used :https://github.com/jordan-wright/email
+    - testing.Short() used flag when testing is too long to execute and we wnat to skip it (code inside .short() t.Skip())
+        - adding --short flag to set it true when calling "go test"
+    - AWS SES (amazon Simple Email Services)
 
 ## ETC
 ------ 
@@ -300,3 +309,10 @@ ATDD in short explanation:
     - postgre : 5432
     - redis : 6379
     - webapps : 8080
+19. Docker windows/macos need to be curl in docker-machine -ip instead of localhost
+    - https://forums.docker.com/t/curl-7-failed-to-connect-to-localhost-port-49160-connection-refused/7703
+20. Redis docker Container connecting with redis-cli
+    - https://stackoverflow.com/questions/54205691/access-redis-cli-inside-a-docker-container
+21. next GRPC 
+    - https://github.com/techschool/pcbook-go
+    - https://www.youtube.com/playlist?list=PLy_6D98if3UJd5hxWNfAqKMr15HZqFnqf

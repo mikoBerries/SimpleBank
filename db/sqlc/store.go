@@ -28,14 +28,14 @@ func NewStore(db *sql.DB) *SqlStore {
 	}
 }
 
-// execTx execute transaction
+// execTx Wrapped sqlStore with sql-transcation to rollback when returning err / commit when it's nil
 func (sqlStore *SqlStore) execTx(ctx context.Context, fn func(*Queries) error) error {
 	//Begin Transaction using context and isolation rule
 	tx, err := sqlStore.db.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("error when begin transcation %w", err)
 	}
-	defer tx.Rollback()
+
 	q := New(tx)
 	err = fn(q)
 	if err != nil {
