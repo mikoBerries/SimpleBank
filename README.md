@@ -241,8 +241,26 @@ ATDD in short explanation:
     - using rakyll/statik to allows you to embed a directory of static files into your Go binary (it' wil faster since it's no need to read file when called)
     - https://github.com/rakyll/statik
 
-9. Redis
+## Section Asynchronous processing with background workers
+---------------------------------------------------------- 
+1. asynq lib
+    - https://github.com/hibiken/asynq still in heavy develoment release version is not done yet but high star on github
+2. Redis
+    - Redis is an open source (BSD licensed), in-memory data structure store used as a database, cache, message broker, and streaming engine.
+    - Redis Data type https://redis.io/docs/data-types/
     - Best practices https://climbtheladder.com/10-redis-key-best-practices/
+    - Always seting task with some delay so database state will be ready and redis task will satified.
+    - To start redis in windows bash we must bring .conf file while starting redis-server.exe
+    ```console
+    $ redis-server.exe ~/path/to/redis/redis.windows.conf
+    ```
+3. Simple Mail Transfer Protocol (SMTP)
+    - standart liblary from go :https://pkg.go.dev/net/smtp (The smtp package is frozen and is not accepting new features. Some external packages provide more functionality.)
+    - lib used :https://github.com/jordan-wright/email
+    - testing.Short() used flag when testing is too long to execute and we wnat to skip it (code inside .short() t.Skip())
+        - adding --short flag to set it true when calling "go test"
+    - AWS SES (amazon Simple Email Services)
+
 ## ETC
 ------ 
 1. explanation of "var _ Interface = (*Type)(nil)"
@@ -285,3 +303,16 @@ ATDD in short explanation:
      - PUT modifies a record's information and creates a new record if one is not available, and PATCH updates a resource without sending the entire body in the request.
 17. Postman for testing Support http, gRPC, documenting, easy value set, etc
     - https://learning.postman.com/docs/sending-requests/variables/
+18. synchronous and asynchronous
+    - https://www.mendix.com/blog/asynchronous-vs-synchronous-programming/#:~:text=Asynchronous%20is%20a%20non%2Dblocking%20architecture%2C%20so%20the%20execution%20of,of%20the%20one%20before%20it.
+* Default port 
+    - postgre : 5432
+    - redis : 6379
+    - webapps : 8080
+19. Docker windows/macos need to be curl in docker-machine -ip instead of localhost
+    - https://forums.docker.com/t/curl-7-failed-to-connect-to-localhost-port-49160-connection-refused/7703
+20. Redis docker Container connecting with redis-cli
+    - https://stackoverflow.com/questions/54205691/access-redis-cli-inside-a-docker-container
+21. next GRPC 
+    - https://github.com/techschool/pcbook-go
+    - https://www.youtube.com/playlist?list=PLy_6D98if3UJd5hxWNfAqKMr15HZqFnqf

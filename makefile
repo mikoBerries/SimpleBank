@@ -1,7 +1,9 @@
 DB_URL=postgresql://root:mysecretpassword@localhost:5432/simple_bank?sslmode=disable
 
-ostgres:
+postgres:
 	docker run --name postgres15 -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=mysecretpassword -d postgres
+redis:
+	docker run -d --name redis7 -p 6379:6379 -d redis:7.0-alpine --loglevel warning
 sb:
 	docker run --name sb -p 8080:8080 simplebank:lastest
 simpleBankRelease:
@@ -11,19 +13,23 @@ createdb:
 	docker exec -it postgres15 createdb --username=root --owner=root simple_bank
 dropdb:
 	docker exec -it postgres15 dropdb simple_bank
+
+new_migration:
+	migrate create -ext sql -dir db/migrations -seq $(name)
 migrateup:
 	migrate --path db/migrations -database "$(DB_URL)" -verbose up
 migratedown:
-	migrate --path db/migrations -database "$(DB_URL) -verbose down
+	migrate --path db/migrations -database "$(DB_URL)" -verbose down
 migrateup1:
-	migrate --path db/migrations -database "$(DB_URL) -verbose up 1
+	migrate --path db/migrations -database "$(DB_URL)" -verbose up 1
 migratedown1:
-	migrate --path db/migrations -database "$(DB_URL) -verbose down 1
+	migrate --path db/migrations -database "$(DB_URL)" -verbose down 1
 
 dbdocs:
 	dbdocs build doc/db.dbml
 dbml2sql:
 	dbml2sql doc/db.dbml --postgres -o doc/schema.sql
+
 mock:
 	mockgen -package mockdb -destination db/mock/store.go github.com/MikoBerries/SimpleBank/db/sqlc Store
 dockerBuild :
@@ -45,10 +51,10 @@ evans:
 
 
 test:
-	go test -v -cover ./...
+	go test -v -cover --short ./...
 cleantest:
 	go clean -testcache
 server:
 	go run main.go
 
-PHONY: postgres createdb dropdb migrateup migratedown test cleantest server mock migrateup1 migratedown1 dockerBuild sb dbdocs dbml2sql proto
+PHONY: postgres createdb dropdb migrateup migratedown test cleantest server mock migrateup1 migratedown1 dockerBuild sb dbdocs dbml2sql proto redis
