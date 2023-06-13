@@ -10,7 +10,6 @@ import (
 	"github.com/MikoBerries/SimpleBank/val"
 	"github.com/MikoBerries/SimpleBank/worker"
 	"github.com/hibiken/asynq"
-	"github.com/lib/pq"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -56,11 +55,10 @@ func (server *server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 
 	txUserResult, err := server.store.CreateUserTx(ctx, arg)
 	if err != nil {
-		if pqErr, ok := err.(*pq.Error); ok { //if it is pq error
-			switch pqErr.Code.Name() {
-			case "unique_violation":
-				return nil, status.Errorf(codes.AlreadyExists, "username already exist: %s", err)
-			}
+		//mapped erorr in postgres
+		if db.ErrorCode(err) == db.UniqueViolation {
+			//returning http/2 codes violations instead pq err code
+			return nil, status.Errorf(codes.AlreadyExists, err.Error())
 		}
 		return nil, status.Errorf(codes.Internal, "failed to create user: %s", err)
 	}
