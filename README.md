@@ -261,7 +261,9 @@ ATDD in short explanation:
         - adding --short flag to set it true when calling "go test"
     - AWS SES (amazon Simple Email Services)
 4. Creating unit testing for gRPC services that included backgorund wokers (redis) using go-mock
-    - Since there are two things need to be mocked (Database, Redis) in test code we must separate mock controler for each.
+    - Since there are two things need to be mocked (Database, Redis) in test code we must separate controler for each mock.
+    - Code violations from database must be mapped separately to get expected error.
+    - Token auth can embeded using metadata.NewIncomingContext (package google.golang.org/grpc/metadata). 
 
 ## ETC
 ------ 

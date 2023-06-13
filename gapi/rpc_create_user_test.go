@@ -131,13 +131,7 @@ func TestCreateUser(t *testing.T) {
 			},
 			buildStubs: func(store *mockdb.MockStore, taskDistributor *mockworker.MockTaskDistributor) {
 				//rule expected called function in store interface
-				// arg := db.CreateUserTxParams{
-				// 	CreateUserParams: db.CreateUserParams{
-				// 		Username: expectedUser.Username,
-				// 		FullName: expectedUser.FullName,
-				// 		Email:    expectedUser.Email,
-				// 	},
-				// }
+
 				store.
 					EXPECT().
 					CreateUserTx(gomock.Any(), gomock.Any()).
@@ -145,7 +139,6 @@ func TestCreateUser(t *testing.T) {
 					Return(db.CreateUserTxResult{}, sql.ErrConnDone)
 
 				//rule expected called function in taskDistributor interface
-
 				taskDistributor.
 					EXPECT().
 					DistributeTaskSendVerifyEmail(gomock.Any(), gomock.Any(), gomock.Any()).
@@ -159,6 +152,55 @@ func TestCreateUser(t *testing.T) {
 				require.True(t, ok)
 				//compare code
 				require.Equal(t, codes.Internal, st.Code())
+			},
+		},
+		{
+			name: "DuplicateUsername",
+			req: &pb.CreateUserRequest{
+				Username: expectedUser.Username,
+				Password: password,
+				FullName: expectedUser.FullName,
+				Email:    expectedUser.Email,
+			},
+			buildStubs: func(store *mockdb.MockStore, taskDistributor *mockworker.MockTaskDistributor) {
+				store.EXPECT().
+					CreateUserTx(gomock.Any(), gomock.Any()).
+					Times(1).
+					Return(db.CreateUserTxResult{}, db.ErrUniqueViolation)
+
+				taskDistributor.EXPECT().
+					DistributeTaskSendVerifyEmail(gomock.Any(), gomock.Any(), gomock.Any()).
+					Times(0)
+			},
+			checkResponse: func(t *testing.T, res *pb.CreateUserResponse, err error) {
+				require.Error(t, err)
+				st, ok := status.FromError(err)
+				require.True(t, ok)
+				require.Equal(t, codes.AlreadyExists, st.Code())
+			},
+		},
+		{
+			name: "InvalidEmail",
+			req: &pb.CreateUserRequest{
+				Username: expectedUser.Username,
+				Password: password,
+				FullName: expectedUser.FullName,
+				Email:    "this_is/not?and1email.com@",
+			},
+			buildStubs: func(store *mockdb.MockStore, taskDistributor *mockworker.MockTaskDistributor) {
+				store.EXPECT().
+					CreateUserTx(gomock.Any(), gomock.Any()).
+					Times(0)
+
+				taskDistributor.EXPECT().
+					DistributeTaskSendVerifyEmail(gomock.Any(), gomock.Any(), gomock.Any()).
+					Times(0)
+			},
+			checkResponse: func(t *testing.T, res *pb.CreateUserResponse, err error) {
+				require.Error(t, err)
+				st, ok := status.FromError(err)
+				require.True(t, ok)
+				require.Equal(t, codes.InvalidArgument, st.Code())
 			},
 		},
 	}
