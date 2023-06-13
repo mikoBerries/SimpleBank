@@ -260,6 +260,8 @@ ATDD in short explanation:
     - testing.Short() used flag when testing is too long to execute and we wnat to skip it (code inside .short() t.Skip())
         - adding --short flag to set it true when calling "go test"
     - AWS SES (amazon Simple Email Services)
+4. Creating unit testing for gRPC services that included backgorund wokers (redis) using go-mock
+    - Since there are two things need to be mocked (Database, Redis) in test code we must separate mock controler for each.
 
 ## ETC
 ------ 
@@ -316,3 +318,6 @@ ATDD in short explanation:
 21. next GRPC 
     - https://github.com/techschool/pcbook-go
     - https://www.youtube.com/playlist?list=PLy_6D98if3UJd5hxWNfAqKMr15HZqFnqf
+22. kafka lib for golang
+    - https://github.com/segmentio/kafka-go
+    - https://hub.docker.com/r/bitnami/kafka

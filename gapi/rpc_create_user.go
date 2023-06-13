@@ -29,7 +29,7 @@ func (server *server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		return nil, status.Errorf(codes.Internal, "failed to hash password %s", err)
 	}
 
-	arg := db.CreataUserTxParams{
+	arg := db.CreateUserTxParams{
 		CreateUserParams: db.CreateUserParams{
 			Username:       req.GetUsername(),
 			HashedPassword: saltedPassword,
@@ -54,7 +54,7 @@ func (server *server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		},
 	}
 
-	txUserResult, err := server.store.CreataUserTx(ctx, arg)
+	txUserResult, err := server.store.CreateUserTx(ctx, arg)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok { //if it is pq error
 			switch pqErr.Code.Name() {
