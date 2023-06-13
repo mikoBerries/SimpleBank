@@ -2,18 +2,18 @@ package db
 
 import "context"
 
-type CreataUserTxParams struct {
+type CreateUserTxParams struct {
 	CreateUserParams
 	AfterCreate func(user User) error
 }
 
-type CreataUserTxResult struct {
+type CreateUserTxResult struct {
 	User User
 }
 
 //CreataUserTx create user with transaction to rollback
-func (sqlStore *SqlStore) CreataUserTx(ctx context.Context, arg CreataUserTxParams) (CreataUserTxResult, error) {
-	var result CreataUserTxResult
+func (sqlStore *SqlStore) CreateUserTx(ctx context.Context, arg CreateUserTxParams) (CreateUserTxResult, error) {
+	var result CreateUserTxResult
 	err := sqlStore.execTx(ctx, func(q *Queries) error {
 		var err error
 		//create user first

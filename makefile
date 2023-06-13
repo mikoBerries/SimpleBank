@@ -32,6 +32,8 @@ dbml2sql:
 
 mock:
 	mockgen -package mockdb -destination db/mock/store.go github.com/MikoBerries/SimpleBank/db/sqlc Store
+	mockgen -package mockworker -destination worker/mock/distributor.go github.com/MikoBerries/SimpleBank/worker TaskDistributor
+
 dockerBuild :
 	docker build -t simplebank:lastest .
 
